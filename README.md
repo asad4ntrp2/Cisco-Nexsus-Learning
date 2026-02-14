@@ -12,11 +12,15 @@ A comprehensive study guide for the Cisco Nexus product family, designed for net
 ## Quick Start
 
 Open **`index.html`** in any browser for the interactive learning experience with:
-- Collapsible section-wise navigation
+- Collapsible section-wise navigation with fixed sidebar
 - Syntax-highlighted NX-OS configurations with copy button
-- ASCII network diagrams
-- Search and progress tracking
+- 8 inline SVG architecture diagrams with vibrant gradient styling
+- Full-page **Architecture Diagrams Gallery** with lightbox viewer and SVG download
+- Professional branding badges on all diagrams (gradient panels, author info, GitHub link)
+- Search functionality (Ctrl+K) and scroll progress tracking
+- Self-check progress tracker with localStorage persistence
 - Side-by-side comparison tables
+- Dark theme optimized for readability
 
 ## Repository Structure
 
@@ -101,5 +105,5 @@ This guide was compiled from Cisco official documentation, data sheets, and conf
 ---
 
 *Author: Asad Yaseen (asad4ntrp2@gmail.com)*
-*Version: 1.3.0*
+*Version: 1.3.1*
 *Created: February 14, 2026*

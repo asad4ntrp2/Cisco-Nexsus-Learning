@@ -13,6 +13,21 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ## Changelog
 
+### v1.3.1 (2026-02-14) - Professional Branding Badges
+
+**Changes:**
+- Redesigned all 16 diagram branding badges with professional styling
+- Purple-blue gradient panel background (`#667eea` → `#764ba2`)
+- Bold 17px white author name with gold accent separator bar
+- 13px email and GitHub link text (gold highlight for GitHub URL)
+- Vibrant dual-tone gradient fills on all diagram elements
+  - Green-to-teal (current), Blue-to-indigo (fabric), Orange-to-gold (legacy)
+  - Pink-to-purple (specialized), Red-to-orange (failures)
+- Drop shadows, rounded corners, and diagonal gradient backgrounds
+- Expanded SVG viewBox dimensions for proper badge display
+
+---
+
 ### v1.3.0 (2026-02-14) - Diagrams Gallery + Branding
 
 **Changes:**
