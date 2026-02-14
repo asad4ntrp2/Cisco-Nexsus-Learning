@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="vxlan-packet" name="VXLAN Packet Encapsulation">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;VXLAN Packet Encapsulation Format (RFC 7348)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Original Frame (Inner) -->
+        <mxCell id="inner-label" value="&lt;b&gt;Original Ethernet Frame (Inner)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#006600;" vertex="1" parent="1">
+          <mxGeometry x="450" y="80" width="300" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="inner-dst" value="&lt;b&gt;Dst MAC&lt;/b&gt;&lt;br&gt;(Original)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="200" y="110" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="inner-src" value="&lt;b&gt;Src MAC&lt;/b&gt;&lt;br&gt;(Original)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="330" y="110" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="inner-type" value="&lt;b&gt;EtherType&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="460" y="110" width="80" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="inner-payload" value="&lt;b&gt;Original Payload&lt;/b&gt;&lt;br&gt;(IP + Data)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="540" y="110" width="300" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="inner-fcs" value="&lt;b&gt;FCS&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="840" y="110" width="60" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrow Down -->
+        <mxCell id="arrow1" value="VXLAN Encapsulation (+50 bytes overhead)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=11;fontColor=#CC0000;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="185" width="300" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow-down" value="" style="shape=mxgraph.arrows2.arrow;whiteSpace=wrap;html=1;rotation=90;fillColor=#CC0000;" vertex="1" parent="1">
+          <mxGeometry x="535" y="195" width="30" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Encapsulated Packet -->
+        <mxCell id="enc-label" value="&lt;b&gt;VXLAN Encapsulated Packet&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#000066;" vertex="1" parent="1">
+          <mxGeometry x="400" y="240" width="300" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Outer Ethernet -->
+        <mxCell id="outer-eth" value="&lt;b&gt;Outer Ethernet&lt;/b&gt;&lt;br&gt;Dst: Next-hop MAC&lt;br&gt;Src: VTEP MAC&lt;br&gt;Type: 0x0800 (IP)&lt;br&gt;&lt;i&gt;14 bytes&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="50" y="270" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Outer IP -->
+        <mxCell id="outer-ip" value="&lt;b&gt;Outer IP Header&lt;/b&gt;&lt;br&gt;Src: Source VTEP IP&lt;br&gt;Dst: Dest VTEP IP&lt;br&gt;Proto: UDP (17)&lt;br&gt;&lt;i&gt;20 bytes&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="200" y="270" width="160" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Outer UDP -->
+        <mxCell id="outer-udp" value="&lt;b&gt;Outer UDP Header&lt;/b&gt;&lt;br&gt;Src: Hash (ECMP)&lt;br&gt;Dst: &lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;4789&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;i&gt;8 bytes&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="360" y="270" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- VXLAN Header -->
+        <mxCell id="vxlan-hdr" value="&lt;b&gt;VXLAN Header&lt;/b&gt;&lt;br&gt;Flags: I=1 (valid)&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;VNI: 24-bit&lt;/b&gt;&lt;/font&gt;&lt;br&gt;Reserved: 0&lt;br&gt;&lt;i&gt;8 bytes&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="510" y="270" width="150" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Inner Frame -->
+        <mxCell id="inner-frame" value="&lt;b&gt;Inner Ethernet Frame&lt;/b&gt;&lt;br&gt;(Original frame unchanged)&lt;br&gt;Dst MAC | Src MAC | Payload" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="660" y="270" width="350" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Overhead callout -->
+        <mxCell id="overhead-box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#CC0000;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="265" width="610" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="overhead-label" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;+50 bytes VXLAN overhead → Set underlay MTU to 9216!&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="130" y="380" width="450" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- VNI Detail -->
+        <mxCell id="vni-detail" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="100" y="430" width="900" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="vni-title" value="&lt;b&gt;VXLAN Header Detail (8 bytes)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="350" y="435" width="300" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Bit layout -->
+        <mxCell id="flags" value="&lt;b&gt;Flags (8 bits)&lt;/b&gt;&lt;br&gt;R R R R &lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;I&lt;/b&gt;&lt;/font&gt; R R R&lt;br&gt;I=1 means valid VNI" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="120" y="470" width="170" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="reserved1" value="&lt;b&gt;Reserved&lt;/b&gt;&lt;br&gt;24 bits&lt;br&gt;Must be 0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="290" y="470" width="130" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="vni-field" value="&lt;b&gt;&lt;font color=&quot;#CC0000&quot;&gt;VNI (24 bits)&lt;/font&gt;&lt;/b&gt;&lt;br&gt;0 to 16,777,215&lt;br&gt;Identifies the VXLAN segment" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="420" y="470" width="240" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="reserved2" value="&lt;b&gt;Reserved&lt;/b&gt;&lt;br&gt;8 bits&lt;br&gt;Must be 0" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="660" y="470" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Key points -->
+        <mxCell id="kp1" value="&lt;b&gt;Key Points:&lt;/b&gt;&lt;br&gt;- UDP src port = hash of inner headers (enables ECMP load balancing across spine links)&lt;br&gt;- 24-bit VNI = 16 million segments vs 4094 VLANs (12-bit)&lt;br&gt;- MAC-in-UDP encapsulation: Layer 2 over Layer 3" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="120" y="550" width="550" height="55" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

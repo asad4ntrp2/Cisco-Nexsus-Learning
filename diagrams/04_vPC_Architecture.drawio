@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="vpc-arch" name="vPC Architecture and Failure Scenarios">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Cisco Nexus vPC Architecture and Failure Scenarios&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="350" y="10" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Normal Operation -->
+        <mxCell id="normal-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="550" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="normal-title" value="&lt;b&gt;Normal Operation&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontColor=#006600;" vertex="1" parent="1">
+          <mxGeometry x="210" y="65" width="200" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- vPC Domain -->
+        <mxCell id="vpc-domain" value="&lt;b&gt;vPC Domain 100&lt;/b&gt;" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;align=center;fontSize=11;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="95" width="250" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus A -->
+        <mxCell id="nxA" value="&lt;b&gt;Nexus A&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#009900&quot;&gt;PRIMARY&lt;/font&gt;&lt;br&gt;Priority: 2000&lt;br&gt;System MAC: lower" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="80" y="130" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus B -->
+        <mxCell id="nxB" value="&lt;b&gt;Nexus B&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#CC6600&quot;&gt;SECONDARY&lt;/font&gt;&lt;br&gt;Priority: 32667&lt;br&gt;System MAC: higher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="370" y="130" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Peer Link -->
+        <mxCell id="peer-link" value="&lt;b&gt;Peer-Link&lt;/b&gt; (Po1)&lt;br&gt;2x40G, trunk all VLANs&lt;br&gt;Control + Data" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="230" y="145" width="150" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-pl" style="strokeColor=#9673a6;strokeWidth=3;" edge="1" parent="1" source="nxA" target="peer-link"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b-pl" style="strokeColor=#9673a6;strokeWidth=3;" edge="1" parent="1" source="peer-link" target="nxB"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Keepalive -->
+        <mxCell id="keepalive" value="&lt;b&gt;Peer-Keepalive&lt;/b&gt;&lt;br&gt;mgmt0 (L3 heartbeat)" style="text;html=1;strokeColor=#999999;fillColor=none;align=center;fontSize=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="220" width="150" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-ka" style="strokeColor=#999999;dashed=1;" edge="1" parent="1" source="nxA" target="keepalive"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b-ka" style="strokeColor=#999999;dashed=1;" edge="1" parent="1" source="keepalive" target="nxB"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Server -->
+        <mxCell id="server1" value="&lt;b&gt;Server / Access Switch&lt;/b&gt;&lt;br&gt;LACP Port Channel&lt;br&gt;(Sees ONE logical switch)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="190" y="300" width="230" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-srv" value="vPC 10" style="strokeColor=#006600;strokeWidth=2;" edge="1" parent="1" source="nxA" target="server1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="b-srv" value="vPC 10" style="strokeColor=#006600;strokeWidth=2;" edge="1" parent="1" source="nxB" target="server1"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Orphan -->
+        <mxCell id="orphan" value="&lt;b&gt;Orphan Port&lt;/b&gt;&lt;br&gt;Single-attached" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="50" y="390" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-orp" style="strokeColor=#b85450;" edge="1" parent="1" source="nxA" target="orphan"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Failure Scenarios -->
+        <!-- Scenario 1: Peer-Link Failure -->
+        <mxCell id="fail1-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="620" y="60" width="450" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail1-title" value="&lt;b&gt;Failure 1: Peer-Link Down (Keepalive UP)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;fontColor=#CC6600;" vertex="1" parent="1">
+          <mxGeometry x="700" y="65" width="300" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail1-a" value="&lt;b&gt;Primary&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#009900&quot;&gt;ALL PORTS UP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="640" y="100" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail1-x" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;X&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="800" y="100" width="30" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail1-b" value="&lt;b&gt;Secondary&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;vPC PORTS SHUT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="850" y="100" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail1-note" value="Secondary shuts all vPC members&lt;br&gt;Orphan ports on Secondary become unreachable&lt;br&gt;All traffic via Primary only" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="170" width="350" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Scenario 2: Split-Brain -->
+        <mxCell id="fail2-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="620" y="280" width="450" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail2-title" value="&lt;b&gt;&lt;font color=&quot;#CC0000&quot;&gt;CRITICAL: Split-Brain (Both Links Down)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="700" y="285" width="300" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail2-a" value="&lt;b&gt;Thinks: PRIMARY&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;ALL PORTS UP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="640" y="320" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail2-x1" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;X&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="800" y="315" width="30" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail2-x2" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;X&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="800" y="345" width="30" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail2-b" value="&lt;b&gt;Thinks: PRIMARY&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;ALL PORTS UP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="850" y="320" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="fail2-note" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;DANGER:&lt;/b&gt;&lt;/font&gt; Both switches think they are Primary!&lt;br&gt;Results: Duplicate traffic, MAC flapping,&lt;br&gt;L2 loops, black-holing traffic&lt;br&gt;&lt;br&gt;&lt;b&gt;Prevention:&lt;/b&gt; Independent paths for&lt;br&gt;peer-link and keepalive" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="385" width="350" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Consistency Checks -->
+        <mxCell id="cc-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="30" y="500" width="1040" height="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="cc-title" value="&lt;b&gt;vPC Consistency Checks&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontColor=#000066;" vertex="1" parent="1">
+          <mxGeometry x="410" y="505" width="250" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="type1" value="&lt;b&gt;Type 1 (SUSPEND vPC ports if mismatch)&lt;/b&gt;&lt;br&gt;&lt;br&gt;- STP mode (PVST/MST/Rapid-PVST)&lt;br&gt;- STP global settings&lt;br&gt;- VLAN allowed on trunk&lt;br&gt;- STP interface parameters&lt;br&gt;- Port mode (access/trunk)&lt;br&gt;- MTU&lt;br&gt;- Storm control settings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="540" width="450" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="type2" value="&lt;b&gt;Type 2 (WARNING only, no suspend)&lt;/b&gt;&lt;br&gt;&lt;br&gt;- STP priority&lt;br&gt;- STP port type&lt;br&gt;- BPDU filter/guard&lt;br&gt;- LACP mode" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="540" y="540" width="450" height="190" as="geometry"/>
+        </mxCell>
+
+        <!-- Best Practices -->
+        <mxCell id="bp-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=20;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="60" width="400" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="bp-title" value="&lt;b&gt;vPC Best Practices&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontColor=#006600;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="65" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="bp-list" value="1. peer-link: 2x 10G or 40G+ in port-channel&lt;br&gt;&lt;br&gt;2. peer-keepalive: Use mgmt0 or dedicated VRF&lt;br&gt;   NEVER use peer-link path&lt;br&gt;&lt;br&gt;3. Enable peer-gateway (route peer MAC)&lt;br&gt;&lt;br&gt;4. Enable peer-switch (shared STP root)&lt;br&gt;&lt;br&gt;5. delay restore 150 (prevent blackhole)&lt;br&gt;&lt;br&gt;6. auto-recovery (dual reboot recovery)&lt;br&gt;&lt;br&gt;7. ip arp synchronize&lt;br&gt;&lt;br&gt;8. Separate physical paths for peer-link&lt;br&gt;   and keepalive links" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1115" y="100" width="370" height="350" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

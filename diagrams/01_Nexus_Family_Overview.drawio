@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="nexus-family" name="Nexus Product Family Overview">
+    <mxGraphModel dx="1422" dy="762" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Cisco Nexus Product Family Overview&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="600" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus 9000 Section -->
+        <mxCell id="n9000-group" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1520" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="n9000-title" value="&lt;b&gt;NEXUS 9000 SERIES (Flagship - Data Center)&lt;/b&gt;&lt;br&gt;NX-OS Mode or ACI Mode | Cloud Scale ASIC" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="50" y="85" width="500" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n9200" value="&lt;b&gt;9200&lt;/b&gt;&lt;br&gt;Fixed 1RU&lt;br&gt;Leaf / Aggregation&lt;br&gt;7.2 Tbps&lt;br&gt;1/10/25/40/50/100G" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="60" y="130" width="200" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="n9300" value="&lt;b&gt;9300 (Most Popular)&lt;/b&gt;&lt;br&gt;Fixed 1RU&lt;br&gt;Leaf Switch&lt;br&gt;3.6 Tbps&lt;br&gt;EX→FX→FX2→FX3→GX→GX2&lt;br&gt;48x 10/25G + 6x 100G" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="280" y="130" width="250" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="n9400" value="&lt;b&gt;9400&lt;/b&gt;&lt;br&gt;Modular 4RU&lt;br&gt;Aggregation / Spine&lt;br&gt;25.6 Tbps&lt;br&gt;8 Expansion Slots&lt;br&gt;64x 400G, MACsec, PTP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="550" y="130" width="220" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="n9500" value="&lt;b&gt;9500&lt;/b&gt;&lt;br&gt;Modular 4/8/16 Slot&lt;br&gt;Spine / Core&lt;br&gt;Internal Clos Fabric&lt;br&gt;16 Line Cards + 6 FMs&lt;br&gt;1-400G Line Cards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="790" y="130" width="220" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="n9800" value="&lt;b&gt;9800&lt;/b&gt;&lt;br&gt;Ultra-High Density&lt;br&gt;400/800G Ready&lt;br&gt;AI/ML Workloads&lt;br&gt;Latest Generation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="130" width="200" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus 7000 -->
+        <mxCell id="n7000" value="&lt;b&gt;NEXUS 7000/7700&lt;/b&gt;&lt;br&gt;Legacy Modular Core&lt;br&gt;VDC, OTV, FabricPath&lt;br&gt;Supervisor + I/O Modules&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;End-of-Sale&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="40" y="310" width="300" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus 5000 -->
+        <mxCell id="n5000" value="&lt;b&gt;NEXUS 5000/5500/5600&lt;/b&gt;&lt;br&gt;Legacy Access/Aggregation&lt;br&gt;Unified Fabric (LAN+SAN)&lt;br&gt;FCoE, FabricPath&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;End-of-Sale&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="370" y="310" width="300" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus 3000 -->
+        <mxCell id="n3000" value="&lt;b&gt;NEXUS 3000/3500&lt;/b&gt;&lt;br&gt;Low-Latency ToR&lt;br&gt;HPC, Financial Trading&lt;br&gt;Sub-microsecond latency&lt;br&gt;Same NX-OS as 9000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="700" y="310" width="300" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Nexus 2000 -->
+        <mxCell id="n2000" value="&lt;b&gt;NEXUS 2000 (FEX)&lt;/b&gt;&lt;br&gt;Fabric Extender&lt;br&gt;Remote Line Card&lt;br&gt;Managed by Parent N5K/7K/9K&lt;br&gt;Declining in new designs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="310" width="300" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-title" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="80" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="40" y="485" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1t" value="Current / Recommended" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="65" y="485" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="230" y="485" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2t" value="Legacy / End-of-Sale" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="255" y="485" width="150" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="420" y="485" width="20" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3t" value="Specialized" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="445" y="485" width="100" height="20" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

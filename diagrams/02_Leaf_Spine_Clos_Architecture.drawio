@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="clos-arch" name="Leaf-Spine Clos Architecture">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Leaf-Spine (Clos) Architecture - VXLAN EVPN Fabric&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="350" y="10" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- External Network -->
+        <mxCell id="ext-cloud" value="&lt;b&gt;External Network&lt;/b&gt;&lt;br&gt;(WAN / Internet / Other DC)" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="480" y="60" width="240" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Border Leaf -->
+        <mxCell id="border-leaf" value="&lt;b&gt;Border Leaf&lt;/b&gt;&lt;br&gt;VRF-Lite / eBGP&lt;br&gt;to External" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="520" y="190" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ext-to-bl" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="ext-cloud" target="border-leaf">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Spine Layer -->
+        <mxCell id="spine-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="100" y="290" width="1000" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="spine-label" value="&lt;b&gt;SPINE LAYER&lt;/b&gt; (BGP Route Reflectors, NO VTEPs)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#B85450;" vertex="1" parent="1">
+          <mxGeometry x="110" y="293" width="400" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="spine1" value="&lt;b&gt;Spine 1&lt;/b&gt;&lt;br&gt;N9500/9364C&lt;br&gt;Route Reflector&lt;br&gt;10.1.0.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="200" y="315" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="spine2" value="&lt;b&gt;Spine 2&lt;/b&gt;&lt;br&gt;N9500/9364C&lt;br&gt;Route Reflector&lt;br&gt;10.1.0.2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="520" y="315" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="spine3" value="&lt;b&gt;Spine 3&lt;/b&gt;&lt;br&gt;N9500/9364C&lt;br&gt;Route Reflector&lt;br&gt;10.1.0.3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="840" y="315" width="160" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Leaf Layer -->
+        <mxCell id="leaf-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="30" y="450" width="1140" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="leaf-label" value="&lt;b&gt;LEAF LAYER&lt;/b&gt; (VTEPs, Anycast Gateway, L2/L3 VNI)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#0000CC;" vertex="1" parent="1">
+          <mxGeometry x="40" y="453" width="400" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="leaf1" value="&lt;b&gt;Leaf 1&lt;/b&gt;&lt;br&gt;N9300-FX3&lt;br&gt;VTEP: 10.1.1.11&lt;br&gt;VNI: 10010, 10020" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="50" y="480" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="leaf2" value="&lt;b&gt;Leaf 2&lt;/b&gt;&lt;br&gt;N9300-FX3&lt;br&gt;VTEP: 10.1.1.12&lt;br&gt;VNI: 10010, 10020" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="260" y="480" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="leaf3" value="&lt;b&gt;Leaf 3&lt;/b&gt;&lt;br&gt;N9300-FX3&lt;br&gt;VTEP: 10.1.1.13&lt;br&gt;VNI: 10010, 10030" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="470" y="480" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="leaf4" value="&lt;b&gt;Leaf 4&lt;/b&gt;&lt;br&gt;N9300-FX3&lt;br&gt;VTEP: 10.1.1.14&lt;br&gt;VNI: 10020, 10030" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="680" y="480" width="160" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="leaf5" value="&lt;b&gt;Leaf 5&lt;/b&gt;&lt;br&gt;N9300-FX3&lt;br&gt;VTEP: 10.1.1.15&lt;br&gt;VNI: 10010, 10030" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="890" y="480" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Spine to Leaf connections -->
+        <mxCell id="s1l1" style="strokeColor=#999999;" edge="1" parent="1" source="spine1" target="leaf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s1l2" style="strokeColor=#999999;" edge="1" parent="1" source="spine1" target="leaf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s1l3" style="strokeColor=#999999;" edge="1" parent="1" source="spine1" target="leaf3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s1l4" style="strokeColor=#999999;" edge="1" parent="1" source="spine1" target="leaf4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s1l5" style="strokeColor=#999999;" edge="1" parent="1" source="spine1" target="leaf5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="s2l1" style="strokeColor=#999999;" edge="1" parent="1" source="spine2" target="leaf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s2l2" style="strokeColor=#999999;" edge="1" parent="1" source="spine2" target="leaf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s2l3" style="strokeColor=#999999;" edge="1" parent="1" source="spine2" target="leaf3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s2l4" style="strokeColor=#999999;" edge="1" parent="1" source="spine2" target="leaf4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s2l5" style="strokeColor=#999999;" edge="1" parent="1" source="spine2" target="leaf5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="s3l1" style="strokeColor=#999999;" edge="1" parent="1" source="spine3" target="leaf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s3l2" style="strokeColor=#999999;" edge="1" parent="1" source="spine3" target="leaf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s3l3" style="strokeColor=#999999;" edge="1" parent="1" source="spine3" target="leaf3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s3l4" style="strokeColor=#999999;" edge="1" parent="1" source="spine3" target="leaf4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="s3l5" style="strokeColor=#999999;" edge="1" parent="1" source="spine3" target="leaf5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Border to Spines -->
+        <mxCell id="bls1" style="strokeColor=#CC0000;strokeWidth=2;dashed=1;" edge="1" parent="1" source="border-leaf" target="spine1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="bls2" style="strokeColor=#CC0000;strokeWidth=2;dashed=1;" edge="1" parent="1" source="border-leaf" target="spine2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="bls3" style="strokeColor=#CC0000;strokeWidth=2;dashed=1;" edge="1" parent="1" source="border-leaf" target="spine3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Servers -->
+        <mxCell id="srv1" value="Server A&lt;br&gt;VLAN 10" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageBackgroundColor=#ffffff;imageBorder=default;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="90" y="610" width="40" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="srv2" value="Server B&lt;br&gt;VLAN 20" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageBackgroundColor=#ffffff;imageBorder=default;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="300" y="610" width="40" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="srv3" value="Server C&lt;br&gt;VLAN 10" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageBackgroundColor=#ffffff;imageBorder=default;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="510" y="610" width="40" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="srv4" value="Server D&lt;br&gt;VLAN 30" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageBackgroundColor=#ffffff;imageBorder=default;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="720" y="610" width="40" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="srv5" value="Server E&lt;br&gt;VLAN 10" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageBackgroundColor=#ffffff;imageBorder=default;image=img/lib/active_directory/generic_server.svg;" vertex="1" parent="1">
+          <mxGeometry x="930" y="610" width="40" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l1s1" style="strokeColor=#0066CC;" edge="1" parent="1" source="leaf1" target="srv1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l2s2" style="strokeColor=#0066CC;" edge="1" parent="1" source="leaf2" target="srv2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l3s3" style="strokeColor=#0066CC;" edge="1" parent="1" source="leaf3" target="srv3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l4s4" style="strokeColor=#0066CC;" edge="1" parent="1" source="leaf4" target="srv4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l5s5" style="strokeColor=#0066CC;" edge="1" parent="1" source="leaf5" target="srv5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Annotations -->
+        <mxCell id="ann1" value="ECMP: All spine links active&lt;br&gt;No STP needed" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontColor=#009900;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="340" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ann2" value="Every Leaf connects to&lt;br&gt;EVERY Spine (full mesh)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontColor=#0000CC;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="420" width="160" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ann3" value="2 hops between any&lt;br&gt;two servers (deterministic)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;fontColor=#CC6600;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="500" width="180" height="30" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="l2l3vni" name="L2 VNI vs L3 VNI Traffic Flow">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;L2 VNI (Bridging) vs L3 VNI (Routing) Traffic Flow&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="350" y="10" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- L2 VNI Section -->
+        <mxCell id="l2-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;opacity=15;" vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="1340" height="310" as="geometry"/>
+        </mxCell>
+        <mxCell id="l2-title" value="&lt;b&gt;&lt;font color=&quot;#000066&quot;&gt;L2 VNI: Same Subnet (Bridging) — e.g., Both hosts on VLAN 10 / VNI 10010&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="65" width="600" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l2-spine" value="&lt;b&gt;Spine&lt;/b&gt;&lt;br&gt;(Pure L3 Router)&lt;br&gt;No VTEP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="560" y="100" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l2-leaf1" value="&lt;b&gt;Leaf 1 (VTEP)&lt;/b&gt;&lt;br&gt;VNI 10010&lt;br&gt;Encapsulate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="200" y="190" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="l2-leaf2" value="&lt;b&gt;Leaf 2 (VTEP)&lt;/b&gt;&lt;br&gt;VNI 10010&lt;br&gt;Decapsulate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="880" y="190" width="140" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l2-hostA" value="&lt;b&gt;Host A&lt;/b&gt;&lt;br&gt;VLAN 10&lt;br&gt;10.10.10.5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="200" y="290" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="l2-hostB" value="&lt;b&gt;Host B&lt;/b&gt;&lt;br&gt;VLAN 10&lt;br&gt;10.10.10.20" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="290" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- L2 VNI Tunnel -->
+        <mxCell id="l2-tunnel" value="&lt;font color=&quot;#0000CC&quot;&gt;&lt;b&gt;VXLAN Tunnel (L2 VNI 10010)&lt;/b&gt;&lt;br&gt;Outer: VTEP1 IP → VTEP2 IP | UDP 4789 | VNI 10010&lt;br&gt;Inner: Original L2 Frame (same subnet)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#0000CC;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="185" width="480" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l2-l1-s" style="strokeColor=#999999;" edge="1" parent="1" source="l2-leaf1" target="l2-spine"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l2-s-l2" style="strokeColor=#999999;" edge="1" parent="1" source="l2-spine" target="l2-leaf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l2-ha-l1" style="strokeColor=#0066CC;" edge="1" parent="1" source="l2-hostA" target="l2-leaf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l2-l2-hb" style="strokeColor=#0066CC;" edge="1" parent="1" source="l2-leaf2" target="l2-hostB"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="l2-flow" value="&lt;b&gt;Flow:&lt;/b&gt; Host A → Leaf 1 encapsulates with VNI 10010 → IP routed via Spine → Leaf 2 decapsulates → Host B&lt;br&gt;&lt;b&gt;Key:&lt;/b&gt; Same subnet = L2 VNI only, no routing needed. Frame is bridged across the fabric." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="345" width="700" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- L3 VNI Section -->
+        <mxCell id="l3-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=15;" vertex="1" parent="1">
+          <mxGeometry x="30" y="400" width="1340" height="380" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3-title" value="&lt;b&gt;&lt;font color=&quot;#006600&quot;&gt;L3 VNI: Different Subnets (Routing — Symmetric IRB) — Host A on VLAN 10, Host C on VLAN 20&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="250" y="405" width="700" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l3-spine" value="&lt;b&gt;Spine&lt;/b&gt;&lt;br&gt;(Pure L3 Router)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="560" y="445" width="120" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l3-leaf1" value="&lt;b&gt;Leaf 1 (VTEP)&lt;/b&gt;&lt;br&gt;1. Receives from Host A&lt;br&gt;2. Routes VLAN10→VRF&lt;br&gt;3. Encap with &lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;L3 VNI 50001&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="140" y="520" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3-leaf2" value="&lt;b&gt;Leaf 2 (VTEP)&lt;/b&gt;&lt;br&gt;4. Decap L3 VNI 50001&lt;br&gt;5. Routes VRF→VLAN20&lt;br&gt;6. Delivers to Host C" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="520" width="200" height="80" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l3-hostA" value="&lt;b&gt;Host A&lt;/b&gt;&lt;br&gt;VLAN 10 / VNI 10010&lt;br&gt;10.10.10.5&lt;br&gt;GW: 10.10.10.1 (anycast)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="140" y="640" width="200" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="l3-hostC" value="&lt;b&gt;Host C&lt;/b&gt;&lt;br&gt;VLAN 20 / VNI 10020&lt;br&gt;10.20.20.10&lt;br&gt;GW: 10.20.20.1 (anycast)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="880" y="640" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- L3 VNI Tunnel -->
+        <mxCell id="l3-tunnel" value="&lt;font color=&quot;#006600&quot;&gt;&lt;b&gt;VXLAN Tunnel (L3 VNI 50001 — VRF Transit)&lt;/b&gt;&lt;br&gt;Outer: VTEP1 IP → VTEP2 IP | UDP 4789 | &lt;font color=&quot;#CC0000&quot;&gt;VNI 50001&lt;/font&gt;&lt;br&gt;Inner: Routed packet (different subnets)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#006600;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="370" y="525" width="480" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l3-l1-s" style="strokeColor=#999999;" edge="1" parent="1" source="l3-leaf1" target="l3-spine"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l3-s-l2" style="strokeColor=#999999;" edge="1" parent="1" source="l3-spine" target="l3-leaf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l3-ha-l1" style="strokeColor=#0066CC;" edge="1" parent="1" source="l3-hostA" target="l3-leaf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l3-l2-hc" style="strokeColor=#006600;" edge="1" parent="1" source="l3-leaf2" target="l3-hostC"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="l3-flow" value="&lt;b&gt;Symmetric IRB Flow:&lt;/b&gt; Host A → Leaf 1 (route from VNI 10010 to VRF, encap with L3 VNI 50001) → Spine → Leaf 2 (decap L3 VNI, route from VRF to VNI 10020) → Host C&lt;br&gt;&lt;b&gt;Key:&lt;/b&gt; Different subnets = L3 VNI carries routed traffic between VTEPs. Both ingress and egress VTEPs perform routing (symmetric)." style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="50" y="720" width="900" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- VNI Summary -->
+        <mxCell id="vni-summary" value="&lt;b&gt;Summary:&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#0000CC&quot;&gt;L2 VNI (10010, 10020)&lt;/font&gt; = Per-VLAN bridging&lt;br&gt;&lt;font color=&quot;#CC0000&quot;&gt;L3 VNI (50001)&lt;/font&gt; = Per-VRF routing (one per tenant)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;align=left;spacingLeft=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="430" width="250" height="70" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

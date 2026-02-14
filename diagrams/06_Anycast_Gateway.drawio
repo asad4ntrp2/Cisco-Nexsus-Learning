@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-14T00:00:00.000Z" agent="draw.io" version="21.0.0" type="device">
+  <diagram id="anycast-gw" name="Distributed Anycast Gateway vs HSRP">
+    <mxGraphModel dx="1422" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Legacy HSRP vs VXLAN Distributed Anycast Gateway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="300" y="10" width="500" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- LEFT: Legacy HSRP -->
+        <mxCell id="legacy-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;opacity=15;" vertex="1" parent="1">
+          <mxGeometry x="30" y="60" width="520" height="500" as="geometry"/>
+        </mxCell>
+        <mxCell id="legacy-title" value="&lt;b&gt;&lt;font color=&quot;#CC0000&quot;&gt;LEGACY: HSRP/VRRP (Active-Standby)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="130" y="65" width="350" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l-sw-a" value="&lt;b&gt;Switch A&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#009900&quot;&gt;HSRP ACTIVE&lt;/font&gt;&lt;br&gt;Real IP: .2&lt;br&gt;VIP: &lt;b&gt;.1&lt;/b&gt;&lt;br&gt;VMAC: 0000.0c07.ac0a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="180" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="l-sw-b" value="&lt;b&gt;Switch B&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#CC6600&quot;&gt;HSRP STANDBY&lt;/font&gt;&lt;br&gt;Real IP: .3&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;Idle (wasted!)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="340" y="110" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l-host-a" value="Host A&lt;br&gt;GW: 10.10.10.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="110" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="l-host-b" value="Host B&lt;br&gt;GW: 10.10.10.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="370" y="280" width="110" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="l-a-ha" style="strokeColor=#009900;strokeWidth=2;" edge="1" parent="1" source="l-host-a" target="l-sw-a"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="l-b-hb" style="strokeColor=#999999;" edge="1" parent="1" source="l-host-b" target="l-sw-b"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Trombone arrow -->
+        <mxCell id="trombone" value="" style="strokeColor=#CC0000;strokeWidth=2;dashed=1;endArrow=block;" edge="1" parent="1" source="l-sw-b" target="l-sw-a">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="trombone-label" value="&lt;font color=&quot;#CC0000&quot;&gt;Traffic TROMBONES&lt;br&gt;to Active switch!&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="210" y="210" width="140" height="30" as="geometry"/>
+        </mxCell>
+
+        <!-- Problems -->
+        <mxCell id="l-problems" value="&lt;b&gt;&lt;font color=&quot;#CC0000&quot;&gt;Problems:&lt;/font&gt;&lt;/b&gt;&lt;br&gt;1. Standby switch wastes capacity&lt;br&gt;2. Host B traffic must cross to Switch A (trombone)&lt;br&gt;3. Failover takes seconds (HSRP timers)&lt;br&gt;4. VIP only on one switch at a time&lt;br&gt;5. Suboptimal traffic path" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="60" y="350" width="400" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- RIGHT: Anycast Gateway -->
+        <mxCell id="anycast-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;opacity=15;" vertex="1" parent="1">
+          <mxGeometry x="580" y="60" width="620" height="500" as="geometry"/>
+        </mxCell>
+        <mxCell id="anycast-title" value="&lt;b&gt;&lt;font color=&quot;#006600&quot;&gt;VXLAN: Distributed Anycast Gateway (All Active!)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="680" y="65" width="400" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a-leaf1" value="&lt;b&gt;Leaf 1&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#009900&quot;&gt;ACTIVE GW&lt;/font&gt;&lt;br&gt;IP: &lt;b&gt;10.10.10.1&lt;/b&gt;&lt;br&gt;MAC: &lt;b&gt;0000.2222.3333&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="610" y="110" width="170" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-leaf2" value="&lt;b&gt;Leaf 2&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#009900&quot;&gt;ACTIVE GW&lt;/font&gt;&lt;br&gt;IP: &lt;b&gt;10.10.10.1&lt;/b&gt;&lt;br&gt;MAC: &lt;b&gt;0000.2222.3333&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="830" y="110" width="170" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-leaf3" value="&lt;b&gt;Leaf 3&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#009900&quot;&gt;ACTIVE GW&lt;/font&gt;&lt;br&gt;IP: &lt;b&gt;10.10.10.1&lt;/b&gt;&lt;br&gt;MAC: &lt;b&gt;0000.2222.3333&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="110" width="140" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="same-label" value="&lt;font color=&quot;#006600&quot;&gt;&lt;b&gt;SAME IP + SAME MAC on ALL leaves!&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="710" y="205" width="350" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a-host-a" value="Host A&lt;br&gt;GW: 10.10.10.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="280" width="110" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-host-b" value="Host B&lt;br&gt;GW: 10.10.10.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="870" y="280" width="110" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="a-host-c" value="Host C&lt;br&gt;GW: 10.10.10.1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="280" width="110" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="a-a-ha" value="Route locally!" style="strokeColor=#009900;strokeWidth=2;fontSize=9;" edge="1" parent="1" source="a-host-a" target="a-leaf1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a-b-hb" value="Route locally!" style="strokeColor=#009900;strokeWidth=2;fontSize=9;" edge="1" parent="1" source="a-host-b" target="a-leaf2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a-c-hc" value="Route locally!" style="strokeColor=#009900;strokeWidth=2;fontSize=9;" edge="1" parent="1" source="a-host-c" target="a-leaf3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <!-- Benefits -->
+        <mxCell id="a-benefits" value="&lt;b&gt;&lt;font color=&quot;#006600&quot;&gt;Benefits:&lt;/font&gt;&lt;/b&gt;&lt;br&gt;1. ALL leaves are active gateways (full utilization)&lt;br&gt;2. No tromboning — traffic routed at closest leaf&lt;br&gt;3. No failover delay — other leaves still have GW&lt;br&gt;4. Same IP AND MAC on every leaf&lt;br&gt;5. Optimal traffic path always" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="610" y="350" width="400" height="100" as="geometry"/>
+        </mxCell>
+
+        <!-- Config -->
+        <mxCell id="config-box" value="&lt;b&gt;Configuration (on every leaf):&lt;/b&gt;&lt;br&gt;&lt;br&gt;fabric forwarding anycast-gateway-mac 0000.2222.3333&lt;br&gt;&lt;br&gt;interface Vlan 10&lt;br&gt;  vrf member TENANT-A&lt;br&gt;  ip address 10.10.10.1/24&lt;br&gt;  fabric forwarding mode anycast-gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#333333;align=left;spacingLeft=10;fontSize=10;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="610" y="460" width="550" height="90" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
