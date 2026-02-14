@@ -13,6 +13,22 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ## Changelog
 
+### v1.2.0 (2026-02-14) - Embedded Interactive Diagrams
+
+**Changes:**
+- Embedded all 8 Draw.io architecture diagrams directly into `index.html`
+  - Part 1: Nexus Family Overview diagram
+  - Part 3: vPC Architecture diagram
+  - Part 7: VXLAN Packet Format diagram
+  - Part 8: EVPN Route Types diagram
+  - Part 9: Anycast Gateway + L2 VNI vs L3 VNI Traffic Flow diagrams
+  - Part 11: NDFC Day-0/Day-1/Day-2 Operations diagram
+  - Part 13: Leaf-Spine Clos Architecture diagram
+- Diagrams render as interactive draw.io viewers (zoom, pan, layers)
+- Each diagram placed in its corresponding study section
+
+---
+
 ### v1.1.0 (2026-02-14) - Interactive HTML + GitHub Release
 
 **Changes:**
