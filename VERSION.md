@@ -13,6 +13,20 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ## Changelog
 
+### v1.3.0 (2026-02-14) - Diagrams Gallery + Branding
+
+**Changes:**
+- Added dedicated **Architecture Diagrams Gallery** section with all 8 diagrams full-page
+- Full-screen lightbox viewer (click any diagram to enlarge, press Escape to close)
+- SVG download button for each diagram
+- Author branding watermark on all diagrams (name, email, GitHub link)
+- GitHub repository link added to landing page with GitHub icon
+- Author metadata added to all Draw.io source files
+- Inline diagrams in study sections are clickable to open lightbox
+- Sidebar navigation updated with Diagrams Gallery link
+
+---
+
 ### v1.2.0 (2026-02-14) - Embedded Interactive Diagrams
 
 **Changes:**

@@ -101,5 +101,5 @@ This guide was compiled from Cisco official documentation, data sheets, and conf
 ---
 
 *Author: Asad Yaseen (asad4ntrp2@gmail.com)*
-*Version: 1.2.0*
+*Version: 1.3.0*
 *Created: February 14, 2026*
