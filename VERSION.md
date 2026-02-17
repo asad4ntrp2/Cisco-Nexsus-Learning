@@ -11,6 +11,32 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ---
 
+### v2.1.0 (2026-02-18) - Private VLANs (PVLANs)
+
+**New Content Added:**
+
+**Section 3.8: Private VLANs (~300 lines)**
+- What are Private VLANs — full theory with architecture diagram
+- Three port types explained: Promiscuous, Community, Isolated
+- How PVLANs maintain security (hardware-enforced L2 isolation, ARP spoofing defense, lateral movement prevention)
+- Complete communication matrix with ASCII diagram
+- How PVLANs communicate with other VLANs (inter-VLAN routing, ip local-proxy-arp for hairpin)
+- Full NX-OS configuration example (9 steps)
+- Verification commands
+- Real-world use cases: multi-tenant colocation, DMZ server isolation, hotel WiFi, PCI-DSS compliance
+- PVLANs in VXLAN environment: VNI mapping, NVE config, EVPN config, anycast gateway integration
+- Benefits and limitations of PVLAN + VXLAN
+
+**New Diagram:**
+- `09_Private_VLAN_Architecture.drawio` — PVLAN architecture with port types, communication rules, and use cases
+
+**Other Updates:**
+- Glossary expanded with 5 new PVLAN terms
+- continue.md updated with PVLAN topics and practice questions
+- README.md updated with PVLAN section and diagram entry
+
+---
+
 ### v2.0.0 (2026-02-18) - DAD, EVPN Guide, Stacking vs VPC
 
 **New Content Added:**
