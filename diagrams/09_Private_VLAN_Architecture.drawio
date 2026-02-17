@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-02-18T00:00:00.000Z" agent="draw.io" author="Asad Yaseen" authorEmail="asad4ntrp2@gmail.com" repository="github.com/asad4ntrp2/Cisco-Nexsus-Learning" version="21.0.0" type="device">
+  <diagram id="pvlan-arch" name="Private VLAN Architecture">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="&lt;b&gt;Private VLAN (PVLAN) Architecture &amp; Communication Rules&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=20;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="300" y="10" width="600" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Primary VLAN 100 — Subnet: 10.10.10.0/24" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="400" y="45" width="400" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Primary VLAN Background -->
+        <mxCell id="primary-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=3;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1520" height="700" as="geometry"/>
+        </mxCell>
+        <mxCell id="primary-label" value="&lt;b&gt;Primary VLAN 100&lt;/b&gt; (All hosts share 10.10.10.0/24)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=13;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="55" y="85" width="400" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Router / Gateway (Promiscuous) -->
+        <mxCell id="router-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="480" y="120" width="260" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="router" value="&lt;b&gt;Router / L3 Switch&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#7B2D8E&quot;&gt;PROMISCUOUS PORT&lt;/font&gt;&lt;br&gt;SVI VLAN 100: 10.10.10.1/24&lt;br&gt;&lt;i&gt;Talks to ALL ports&lt;/i&gt;" style="shape=mxgraph.cisco.routers.router;html=1;whiteSpace=wrap;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="575" y="130" width="70" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows from Router down -->
+        <mxCell id="arrow-r-c1" value="✓" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#009900;strokeWidth=2;fontSize=14;fontColor=#009900;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="230" as="sourcePoint"/>
+            <mxPoint x="250" y="330" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-r-c2" value="✓" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#009900;strokeWidth=2;fontSize=14;fontColor=#009900;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="230" as="sourcePoint"/>
+            <mxPoint x="610" y="330" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="arrow-r-iso" value="✓" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#009900;strokeWidth=2;fontSize=14;fontColor=#009900;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="680" y="230" as="sourcePoint"/>
+            <mxPoint x="1100" y="330" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Community VLAN 201 -->
+        <mxCell id="comm201-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="330" width="420" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="comm201-title" value="&lt;b&gt;Community VLAN 201&lt;/b&gt; (Web Farm)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontColor=#006600;" vertex="1" parent="1">
+          <mxGeometry x="130" y="335" width="280" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Hosts in Community 201 -->
+        <mxCell id="host-a" value="&lt;b&gt;Web-1&lt;/b&gt;&lt;br&gt;10.10.10.10" style="shape=mxgraph.cisco.computers_and_peripherals.web_server;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="120" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="host-b" value="&lt;b&gt;Web-2&lt;/b&gt;&lt;br&gt;10.10.10.11" style="shape=mxgraph.cisco.computers_and_peripherals.web_server;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="280" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <!-- Community can talk arrow -->
+        <mxCell id="comm201-arrow" value="&lt;b&gt;✓ Can communicate&lt;/b&gt;" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#009900;strokeWidth=3;fontSize=11;fontColor=#009900;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="415" as="sourcePoint"/>
+            <mxPoint x="275" y="415" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Community VLAN 202 -->
+        <mxCell id="comm202-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="510" y="330" width="260" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="comm202-title" value="&lt;b&gt;Community VLAN 202&lt;/b&gt; (DB Cluster)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontColor=#003366;" vertex="1" parent="1">
+          <mxGeometry x="530" y="335" width="220" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Hosts in Community 202 -->
+        <mxCell id="host-c" value="&lt;b&gt;DB-1&lt;/b&gt;&lt;br&gt;10.10.10.20" style="shape=mxgraph.cisco.computers_and_peripherals.web_server;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="550" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="host-d" value="&lt;b&gt;DB-2&lt;/b&gt;&lt;br&gt;10.10.10.21" style="shape=mxgraph.cisco.computers_and_peripherals.web_server;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="690" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="comm202-arrow" value="&lt;b&gt;✓ Can communicate&lt;/b&gt;" style="endArrow=classic;startArrow=classic;html=1;strokeColor=#009900;strokeWidth=3;fontSize=11;fontColor=#009900;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="415" as="sourcePoint"/>
+            <mxPoint x="685" y="415" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Isolated VLAN 301 -->
+        <mxCell id="iso301-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="830" y="330" width="680" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="iso301-title" value="&lt;b&gt;Isolated VLAN 301&lt;/b&gt; (Customer VMs — Each Host is Alone)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;fontColor=#990000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="335" width="500" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Hosts in Isolated 301 -->
+        <mxCell id="host-e" value="&lt;b&gt;VM-1&lt;/b&gt;&lt;br&gt;10.10.10.30" style="shape=mxgraph.cisco.computers_and_peripherals.workstation;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="900" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="host-f" value="&lt;b&gt;VM-2&lt;/b&gt;&lt;br&gt;10.10.10.31" style="shape=mxgraph.cisco.computers_and_peripherals.workstation;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="host-g" value="&lt;b&gt;VM-3&lt;/b&gt;&lt;br&gt;10.10.10.32" style="shape=mxgraph.cisco.computers_and_peripherals.workstation;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;whiteSpace=wrap;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="390" width="50" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Blocked arrows in isolated -->
+        <mxCell id="iso-block1" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;✗ BLOCKED&lt;/b&gt;&lt;/font&gt;" style="endArrow=none;html=1;strokeColor=#CC0000;strokeWidth=3;dashed=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="960" y="415" as="sourcePoint"/>
+            <mxPoint x="1095" y="415" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="iso-block2" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;✗ BLOCKED&lt;/b&gt;&lt;/font&gt;" style="endArrow=none;html=1;strokeColor=#CC0000;strokeWidth=3;dashed=1;fontSize=11;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1160" y="415" as="sourcePoint"/>
+            <mxPoint x="1295" y="415" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Cross-community blocked arrows -->
+        <mxCell id="cross-block1" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;✗&lt;/b&gt;&lt;/font&gt;" style="endArrow=none;html=1;strokeColor=#CC0000;strokeWidth=2;dashed=1;fontSize=16;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="480" y="430" as="sourcePoint"/>
+            <mxPoint x="510" y="430" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cross-block2" value="&lt;font color=&quot;#CC0000&quot;&gt;&lt;b&gt;✗&lt;/b&gt;&lt;/font&gt;" style="endArrow=none;html=1;strokeColor=#CC0000;strokeWidth=2;dashed=1;fontSize=16;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="430" as="sourcePoint"/>
+            <mxPoint x="830" y="430" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Communication Rules Box -->
+        <mxCell id="rules-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="560" width="1450" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="rules-title" value="&lt;b&gt;PVLAN Communication Rules&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=15;fontColor=#997700;" vertex="1" parent="1">
+          <mxGeometry x="580" y="565" width="300" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="rule1" value="&lt;font color=&quot;#009900&quot;&gt;✓&lt;/font&gt; &lt;b&gt;Promiscuous&lt;/b&gt; → can talk to ALL ports (community, isolated, other promiscuous)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="600" width="600" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="rule2" value="&lt;font color=&quot;#009900&quot;&gt;✓&lt;/font&gt; &lt;b&gt;Community&lt;/b&gt; → can talk to SAME community members + promiscuous ports" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="630" width="600" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="rule3" value="&lt;font color=&quot;#CC0000&quot;&gt;✗&lt;/font&gt; &lt;b&gt;Community&lt;/b&gt; → CANNOT talk to different community or isolated ports" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="660" width="600" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="rule4" value="&lt;font color=&quot;#CC0000&quot;&gt;✗&lt;/font&gt; &lt;b&gt;Isolated&lt;/b&gt; → can ONLY talk to promiscuous (NOTHING else — not even other isolated hosts)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="690" width="700" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="rule5" value="&lt;font color=&quot;#0066CC&quot;&gt;ℹ&lt;/font&gt; All hosts share the same IP subnet — isolation is enforced at Layer 2 in hardware (ASIC/TCAM)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="100" y="720" width="700" height="25" as="geometry"/>
+        </mxCell>
+
+        <!-- Use Cases column -->
+        <mxCell id="usecase-title" value="&lt;b&gt;Real-World Use Cases:&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontColor=#997700;" vertex="1" parent="1">
+          <mxGeometry x="850" y="600" width="200" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc1" value="• Multi-tenant colocation (isolated VMs per customer)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="625" width="400" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc2" value="• DMZ server isolation (web / mail / DNS segmentation)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="647" width="400" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc3" value="• PCI-DSS compliance (payment server isolation)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="669" width="400" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc4" value="• PVLAN + VXLAN EVPN (fabric-wide micro-segmentation)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="691" width="400" height="22" as="geometry"/>
+        </mxCell>
+        <mxCell id="uc5" value="• Hotel/conference WiFi guest isolation" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="850" y="713" width="400" height="22" as="geometry"/>
+        </mxCell>
+
+        <!-- Branding Badge -->
+        <mxCell id="badge-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#667eea;strokeColor=#764ba2;strokeWidth=1;gradientColor=#764ba2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="800" width="1520" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="badge-text" value="&lt;font color=&quot;#FFFFFF&quot;&gt;&lt;b&gt;Asad Yaseen&lt;/b&gt;  |  asad4ntrp2@gmail.com  |  &lt;font color=&quot;#FFD700&quot;&gt;github.com/asad4ntrp2/Cisco-Nexsus-Learning&lt;/font&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="300" y="808" width="1000" height="30" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

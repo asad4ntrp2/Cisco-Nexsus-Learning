@@ -40,7 +40,8 @@ Cisco Nexsus Learning/
     ├── 05_EVPN_Route_Types.drawio
     ├── 06_Anycast_Gateway.drawio
     ├── 07_L2VNI_vs_L3VNI_Traffic_Flow.drawio
-    └── 08_NDFC_Day0_Day1_Day2.drawio
+    ├── 08_NDFC_Day0_Day1_Day2.drawio
+    └── 09_Private_VLAN_Architecture.drawio
 ```
 
 ## Guide Contents (16 Parts)
@@ -49,7 +50,7 @@ Cisco Nexsus Learning/
 |------|-------|----------|
 | 01 | Nexus Product Family Overview | Platform |
 | 02 | Architecture Deep Dive (Cloud Scale ASIC) | Platform |
-| 03 | Layer 2 Technologies (vPC, STP, Port Channels, **DAD**) | L2 |
+| 03 | Layer 2 Technologies (vPC, STP, Port Channels, **DAD**, **Private VLANs**) | L2 |
 | 04 | Layer 3 Technologies (OSPF, BGP, HSRP, VRF, PIM) | L3 |
 | 05 | NX-OS vs IOS Differences | Comparison |
 | 06 | Nexus vs Catalyst Family | Comparison |
@@ -63,6 +64,18 @@ Cisco Nexsus Learning/
 | 14 | Interview Tips & Common Questions | Interview |
 | **15** | **EVPN Comprehensive Guide (Types, Use Cases, Real-World)** | **EVPN** |
 | **16** | **Stacking vs VPC — Complete Comparison** | **Comparison** |
+
+## What's New in v2.1.0
+
+### Section 3.8: Private VLANs (PVLANs)
+- What are Private VLANs — theory, architecture, three port types (Promiscuous, Community, Isolated)
+- How PVLANs maintain security — hardware-enforced L2 isolation, defense against ARP spoofing & lateral movement
+- Communication matrix — who can talk to whom with ASCII diagrams
+- Inter-VLAN routing with PVLANs — ip local-proxy-arp for hairpin routing
+- Full NX-OS configuration example with verification commands
+- Real-world use cases: multi-tenant colocation, DMZ isolation, hotel WiFi, PCI-DSS compliance
+- PVLANs in VXLAN EVPN — VNI mapping, configuration, benefits, and limitations
+- New draw.io diagram: `09_Private_VLAN_Architecture.drawio`
 
 ## What's New in v2.0.0
 
@@ -120,6 +133,7 @@ All diagrams are in `.drawio` format. Open with:
 | 06 | Anycast Gateway | Legacy HSRP vs distributed anycast |
 | 07 | L2 VNI vs L3 VNI | Bridging vs routing traffic flow |
 | 08 | NDFC Operations | Day-0, Day-1, Day-2 lifecycle |
+| 09 | Private VLAN Architecture | PVLAN types, communication rules, use cases |
 
 ## Key Interview Topics
 
@@ -132,6 +146,7 @@ All diagrams are in `.drawio` format. Open with:
 7. **Clos Fabric** - Leaf-spine design, ECMP, 2-hop latency
 8. **NX-OS vs IOS** - Feature activation, interface-centric config, route-map requirements
 9. **Stacking vs VPC** - Which devices, pros/cons, limitations, when to use each
+10. **Private VLANs** - Port types, communication rules, PVLAN in VXLAN, real-world use cases
 
 ## Sources
 
@@ -140,6 +155,6 @@ This guide was compiled from Cisco official documentation, data sheets, and conf
 ---
 
 *Author: Asad Yaseen (asad4ntrp2@gmail.com)*
-*Version: 2.0.0*
+*Version: 2.1.0*
 *Created: February 14, 2026*
 *Updated: February 18, 2026*

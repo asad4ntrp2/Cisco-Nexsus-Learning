@@ -737,6 +737,493 @@ show switch virtual dual-active summary
 show switch virtual role
 ```
 
+## 3.8 Private VLANs (PVLANs) — Micro-Segmentation at Layer 2
+
+### What are Private VLANs?
+
+**Private VLANs (PVLANs)** are a Layer 2 isolation technology defined in **RFC 5765** that subdivides a single **primary VLAN** into multiple **secondary VLANs** to restrict communication between hosts on the same broadcast domain. PVLANs provide **micro-segmentation** without consuming additional VLAN IDs from the global VLAN pool.
+
+**The problem PVLANs solve:**
+
+In a traditional VLAN, all hosts can communicate freely with each other. But what if you have 200 servers in VLAN 100 and you want:
+- Servers to reach their default gateway (router)
+- Servers to NOT talk to each other directly
+- Some groups of servers to communicate within their group only
+
+Without PVLANs, you'd need a separate VLAN + subnet for each server or group — consuming hundreds of VLANs and IP subnets. PVLANs solve this by keeping everyone in the **same IP subnet** while enforcing **L2 isolation**.
+
+### PVLAN Architecture — Three Port Types
+
+PVLANs work by defining three types of secondary VLANs within a single primary VLAN:
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    PRIVATE VLAN ARCHITECTURE                             │
+│                                                                          │
+│    Primary VLAN 100 (10.10.10.0/24)                                     │
+│    ┌─────────────────────────────────────────────────────────────────┐   │
+│    │                                                                 │   │
+│    │   ┌─────────────────┐    The primary VLAN is the "umbrella"    │   │
+│    │   │ PROMISCUOUS PORT │    that contains all secondary VLANs.   │   │
+│    │   │   (Router/GW)    │    Only promiscuous ports can talk      │   │
+│    │   │   10.10.10.1     │    to ALL hosts.                        │   │
+│    │   └──────┬──────────┘                                          │   │
+│    │          │                                                      │   │
+│    │          │ Can talk to ALL ports (promiscuous → any)            │   │
+│    │          │                                                      │   │
+│    │    ┌─────┴─────────────────────────────────┐                   │   │
+│    │    │                                       │                   │   │
+│    │    ▼                                       ▼                   │   │
+│    │  ┌─────────────────────────┐  ┌──────────────────────────┐    │   │
+│    │  │  COMMUNITY VLAN 201     │  │   ISOLATED VLAN 301      │    │   │
+│    │  │  (Secondary)            │  │   (Secondary)             │    │   │
+│    │  │                         │  │                           │    │   │
+│    │  │  ┌──────┐  ┌──────┐   │  │  ┌──────┐  ┌──────┐     │    │   │
+│    │  │  │Host A│  │Host B│   │  │  │Host D│  │Host E│     │    │   │
+│    │  │  │ .10  │  │ .11  │   │  │  │ .30  │  │ .31  │     │    │   │
+│    │  │  └──┬───┘  └──┬───┘   │  │  └──┬───┘  └──┬───┘     │    │   │
+│    │  │     │◄════════►│       │  │     │    X    │          │    │   │
+│    │  │     Can talk to        │  │     CANNOT talk to       │    │   │
+│    │  │     each other         │  │     each other           │    │   │
+│    │  │     (same community)   │  │     (isolated = alone)   │    │   │
+│    │  └─────────────────────────┘  └──────────────────────────┘    │   │
+│    │          │                                       │             │   │
+│    │          │          ┌──────────────┐             │             │   │
+│    │          │          │ COMMUNITY    │             │             │   │
+│    │          │          │ VLAN 202     │             │             │   │
+│    │          │          │ (Secondary)  │             │             │   │
+│    │          │          │ ┌──────┐     │             │             │   │
+│    │          │          │ │Host C│     │             │             │   │
+│    │          │          │ │ .20  │     │             │             │   │
+│    │          │          │ └──┬───┘     │             │             │   │
+│    │          │          └────┼─────────┘             │             │   │
+│    │          │               │                       │             │   │
+│    │          │    X          │          X            │             │   │
+│    │     Community 201  CANNOT talk to         Isolated 301        │   │
+│    │     CANNOT talk    Community 202          CANNOT talk to      │   │
+│    │     to Community   or Isolated 301        any Community       │   │
+│    │     202 or                                or other Isolated   │   │
+│    │     Isolated 301                                              │   │
+│    │                                                                 │   │
+│    │   ALL hosts share the same subnet: 10.10.10.0/24               │   │
+│    │   ALL hosts use the same gateway: 10.10.10.1 (promiscuous)     │   │
+│    └─────────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+### PVLAN Port Types Explained
+
+| Port Type | VLAN Assignment | Can Talk To | Cannot Talk To | Use Case |
+|-----------|----------------|-------------|----------------|----------|
+| **Promiscuous** | Primary VLAN | ALL ports (community, isolated, and other promiscuous) | — | Default gateway, router, firewall, management server |
+| **Community** | Community VLAN (secondary) | Same community members + promiscuous ports | Isolated ports, other community VLANs | Group of servers that need to communicate (e.g., web farm, DB cluster) |
+| **Isolated** | Isolated VLAN (secondary) | Promiscuous ports ONLY | ALL other isolated ports, ALL community ports | Individual servers that should only reach the gateway (e.g., customer VMs, untrusted hosts) |
+
+### How PVLANs Maintain Security
+
+PVLANs enforce security at the **switch hardware level** (ASIC/TCAM), not through software ACLs:
+
+**1. Traffic Isolation is Enforced in Hardware**
+- The switch's forwarding table prevents isolated ports from sending frames to any port except promiscuous
+- Even if a host spoofs its MAC or IP, L2 forwarding rules block the frame at the ASIC level
+- No ACL processing overhead — isolation is wire-speed
+
+**2. Same Subnet, Different Access Levels**
+- All hosts share 10.10.10.0/24 — no IP address waste
+- But Host D (isolated) cannot ARP for Host E (isolated) — the switch drops the frame
+- Host A (community 201) can ARP for Host B (community 201) — same community, allowed
+- Host A (community 201) cannot ARP for Host C (community 202) — different community, blocked
+
+**3. Defense Against Common L2 Attacks**
+- **ARP spoofing:** Isolated hosts cannot see each other's ARP requests
+- **MAC flooding:** Only the promiscuous port receives traffic from all secondaries
+- **Lateral movement:** A compromised server in an isolated VLAN cannot reach adjacent servers
+- **Broadcast storms:** Broadcasts from isolated ports only reach the promiscuous port, not other isolated ports
+
+### How PVLANs Communicate — Traffic Flow Rules
+
+```
+PVLAN Communication Matrix:
+
+                    TO:
+           ┌──────────────┬──────────────┬──────────────┬──────────────┐
+           │ Promiscuous  │ Community A  │ Community B  │  Isolated    │
+FROM:      │              │              │              │              │
+┌──────────┼──────────────┼──────────────┼──────────────┼──────────────┤
+│Promisc.  │     YES      │     YES      │     YES      │     YES      │
+├──────────┼──────────────┼──────────────┼──────────────┼──────────────┤
+│Comm. A   │     YES      │     YES      │      NO      │      NO      │
+├──────────┼──────────────┼──────────────┼──────────────┼──────────────┤
+│Comm. B   │     YES      │      NO      │     YES      │      NO      │
+├──────────┼──────────────┼──────────────┼──────────────┼──────────────┤
+│Isolated  │     YES      │      NO      │      NO      │      NO      │
+└──────────┴──────────────┴──────────────┴──────────────┴──────────────┘
+
+Key rules:
+✓ Promiscuous can talk to EVERYONE
+✓ Community can talk to SAME community + promiscuous
+✗ Community CANNOT talk to different community or isolated
+✗ Isolated can ONLY talk to promiscuous (nothing else)
+```
+
+### How PVLANs Communicate with Other VLANs (Inter-VLAN Routing)
+
+Hosts in a PVLAN reach other VLANs the same way as any host — through the **default gateway** (promiscuous port). The key is that the router/L3 switch connected to the promiscuous port performs inter-VLAN routing:
+
+```
+                     ┌─────────────────────┐
+                     │    L3 Switch / Router│
+                     │                     │
+                     │  SVI VLAN 100       │
+                     │  10.10.10.1/24      │
+                     │  (Promiscuous)      │
+                     │                     │
+                     │  SVI VLAN 200       │
+                     │  10.20.20.1/24      │
+                     │  (Regular VLAN)     │
+                     └───┬──────────┬──────┘
+                         │          │
+              PVLAN 100  │          │  Regular VLAN 200
+              (Primary)  │          │
+         ┌───────────────┘          └──────────────────┐
+         │                                              │
+    ┌────┴────────────────────────┐          ┌─────────┴──────────┐
+    │   PVLAN Domain              │          │  Regular VLAN 200   │
+    │                             │          │                     │
+    │  ┌────────┐  ┌────────┐   │          │  ┌────────┐        │
+    │  │Host A  │  │Host D  │   │          │  │Host X  │        │
+    │  │Comm 201│  │Isol 301│   │          │  │10.20.  │        │
+    │  │.10     │  │.30     │   │          │  │20.10   │        │
+    │  └────────┘  └────────┘   │          │  └────────┘        │
+    └─────────────────────────────┘          └────────────────────┘
+
+    Traffic flow: Host D (isolated, .30) → Host X (VLAN 200, 10.20.20.10)
+    1. Host D sends packet to default GW 10.10.10.1 (promiscuous port) ✓
+    2. L3 switch routes from VLAN 100 SVI → VLAN 200 SVI
+    3. Packet delivered to Host X on VLAN 200
+    4. Reply: Host X → 10.10.10.30 → routed back to PVLAN 100 → promiscuous → Host D ✓
+
+    Traffic flow: Host D (isolated, .30) → Host A (community 201, .10)
+    1. Host D sends frame to Host A — BLOCKED at L2 (isolated cannot reach community)
+    2. Host D sends to default GW 10.10.10.1 — L3 switch receives it
+    3. L3 switch tries to route back to 10.10.10.10 on same subnet (VLAN 100)
+    4. WITHOUT "ip local-proxy-arp": Traffic is dropped (same-subnet, no routing needed)
+    5. WITH "ip local-proxy-arp": L3 switch responds to ARP on behalf of Host A,
+       routes the packet hairpin-style back through promiscuous port → Host A ✓
+```
+
+**Key command for inter-host communication within PVLAN via router:**
+
+```
+interface Vlan 100
+  ip address 10.10.10.1/24
+  private-vlan mapping 201,301          ! Map secondary VLANs to primary SVI
+  ip local-proxy-arp                     ! Enable hairpin routing within same subnet
+```
+
+> **Critical:** Without `ip local-proxy-arp` on the SVI, hosts in different secondary VLANs within the same primary VLAN **cannot** communicate even through the router, because the router sees them on the same subnet and won't route between them.
+
+### PVLAN Configuration on NX-OS
+
+```
+! === Step 1: Enable PVLAN feature ===
+feature private-vlan
+
+! === Step 2: Create Primary VLAN ===
+vlan 100
+  name PVLAN-PRIMARY
+  private-vlan primary
+
+! === Step 3: Create Community VLANs (Secondary) ===
+vlan 201
+  name PVLAN-COMMUNITY-WEBFARM
+  private-vlan community
+
+vlan 202
+  name PVLAN-COMMUNITY-DBCLUSTER
+  private-vlan community
+
+! === Step 4: Create Isolated VLAN (Secondary) ===
+vlan 301
+  name PVLAN-ISOLATED-CUSTOMERS
+  private-vlan isolated
+
+! === Step 5: Associate Secondary VLANs to Primary ===
+vlan 100
+  private-vlan association 201,202,301
+
+! === Step 6: Configure Promiscuous Port (to Router/Gateway) ===
+interface Ethernet1/1
+  description To-Router-GW (Promiscuous)
+  switchport mode private-vlan promiscuous
+  switchport private-vlan mapping 100 201,202,301
+  no shutdown
+
+! === Step 7: Configure Community Ports ===
+interface Ethernet1/10
+  description WebServer-1 (Community 201)
+  switchport mode private-vlan host
+  switchport private-vlan host-association 100 201
+  no shutdown
+
+interface Ethernet1/11
+  description WebServer-2 (Community 201)
+  switchport mode private-vlan host
+  switchport private-vlan host-association 100 201
+  no shutdown
+
+interface Ethernet1/20
+  description DBServer-1 (Community 202)
+  switchport mode private-vlan host
+  switchport private-vlan host-association 100 202
+  no shutdown
+
+! === Step 8: Configure Isolated Ports ===
+interface Ethernet1/30
+  description Customer-VM-1 (Isolated 301)
+  switchport mode private-vlan host
+  switchport private-vlan host-association 100 301
+  no shutdown
+
+interface Ethernet1/31
+  description Customer-VM-2 (Isolated 301)
+  switchport mode private-vlan host
+  switchport private-vlan host-association 100 301
+  no shutdown
+
+! === Step 9: Configure SVI for Inter-VLAN Routing ===
+interface Vlan 100
+  no shutdown
+  ip address 10.10.10.1/24
+  private-vlan mapping 201,202,301
+  ip local-proxy-arp                     ! Hairpin routing for same-subnet hosts
+```
+
+### PVLAN Verification Commands
+
+```
+show vlan private-vlan                    ! Show PVLAN associations
+show vlan private-vlan type              ! Show primary/community/isolated types
+show interface switchport                 ! Show port PVLAN mode and associations
+show interface Ethernet1/10 switchport   ! Specific port PVLAN details
+show private-vlan                        ! Summary of all PVLAN domains
+show mac address-table vlan 100          ! MAC table for primary VLAN
+show mac address-table vlan 201          ! MAC table for community VLAN
+```
+
+### Real-World Use Cases
+
+#### Use Case 1: Multi-Tenant Colocation / Hosting
+
+**Scenario:** A colocation provider has 50 customer servers in the same rack, all needing internet access through a shared firewall, but no customer should see another customer's traffic.
+
+```
+    ┌───────────────────────┐
+    │  Firewall / Router    │
+    │  (Promiscuous Port)   │
+    │  GW: 10.100.1.1/24   │
+    └──────────┬────────────┘
+               │
+    ┌──────────┴────────────────────────────────────┐
+    │              Nexus Switch                      │
+    │              PVLAN Primary: 100                │
+    │              Isolated VLAN: 301                │
+    │                                                │
+    │   Eth1/1    Eth1/2    Eth1/3    ...  Eth1/50  │
+    │   Isol      Isol      Isol           Isol     │
+    │    │          │          │              │       │
+    └────┼──────────┼──────────┼──────────────┼──────┘
+         │          │          │              │
+    ┌────┴──┐  ┌───┴───┐  ┌──┴────┐   ┌────┴──┐
+    │Cust A │  │Cust B │  │Cust C │   │Cust N │
+    │.10    │  │.11    │  │.12    │   │.59    │
+    └───────┘  └───────┘  └───────┘   └───────┘
+
+    All customers: Same subnet 10.100.1.0/24
+    All customers: Can reach firewall (promiscuous) ✓
+    All customers: CANNOT reach each other ✗ (isolated)
+    Benefit: One subnet, one VLAN, 50 isolated tenants
+```
+
+**Why PVLANs:** Without PVLANs, you'd need 50 VLANs and 50 subnets. With PVLANs, one primary VLAN and one isolated secondary VLAN handles all 50 customers.
+
+#### Use Case 2: DMZ Server Isolation
+
+**Scenario:** A company's DMZ has web servers, mail servers, and DNS servers. Web servers need to talk to each other (load-balanced cluster), but no DMZ server should reach another group.
+
+```
+    ┌────────────────────────┐
+    │  Firewall              │
+    │  (Promiscuous)         │
+    │  DMZ GW: 172.16.1.1   │
+    └──────────┬─────────────┘
+               │
+    ┌──────────┴─────────────────────────────────────────┐
+    │   Primary VLAN 10 (DMZ: 172.16.1.0/24)             │
+    │                                                     │
+    │   Community 101:        Community 102:  Isolated 199│
+    │   Web Servers           Mail Servers    DNS Servers │
+    │   ┌─────┐ ┌─────┐     ┌─────┐         ┌─────┐    │
+    │   │Web-1│ │Web-2│     │Mail │         │DNS  │    │
+    │   │ .10 │ │ .11 │     │ .20 │         │ .30 │    │
+    │   └──┬──┘ └──┬──┘     └─────┘         └─────┘    │
+    │      │◄═════►│                                     │
+    │      Can talk                                      │
+    └────────────────────────────────────────────────────┘
+
+    Web-1 ←→ Web-2: ✓ (same community 101)
+    Web-1 → Mail:   ✗ (different community)
+    DNS → anything: ✗ (isolated, gateway only)
+    All → Firewall: ✓ (promiscuous)
+```
+
+**Security benefit:** If an attacker compromises Web-1, they can reach Web-2 (same cluster) but CANNOT pivot to the mail server or DNS server. Lateral movement is blocked at L2.
+
+#### Use Case 3: Hotel / Conference WiFi Isolation
+
+**Scenario:** A hotel provides WiFi to guests. Each room's AP connects to an isolated port. Guests can reach the internet gateway but not other rooms.
+
+**Why PVLANs:** Simple, scalable guest isolation without per-room VLANs. Thousands of rooms share one subnet.
+
+#### Use Case 4: PCI-DSS Compliance
+
+**Scenario:** Payment card processing servers must be isolated from non-PCI systems per PCI-DSS requirements, but share the same physical switch infrastructure.
+
+**Why PVLANs:** PCI servers in an isolated VLAN can only reach the PCI gateway (promiscuous). Non-PCI servers in a community VLAN can communicate within their group but never reach PCI servers. Auditors accept PVLAN isolation as a valid segmentation control.
+
+### Private VLANs in a VXLAN Environment
+
+PVLANs can be integrated with VXLAN EVPN fabrics to extend micro-segmentation across the entire fabric. This is supported on Nexus 9000 with NX-OS 9.3(3)+ and is particularly useful for large-scale multi-tenant data centers.
+
+#### How PVLANs Work with VXLAN
+
+In a VXLAN fabric, PVLANs are mapped to VNIs just like regular VLANs. The primary VLAN and its secondary VLANs each get their own VNI:
+
+```
+    ┌──────────────────────────────────────────────────────────────────┐
+    │              PVLAN over VXLAN EVPN Fabric                        │
+    │                                                                  │
+    │     Leaf 1 (VTEP 1)                    Leaf 2 (VTEP 2)         │
+    │   ┌──────────────────┐              ┌──────────────────┐        │
+    │   │ Primary VLAN 100 │              │ Primary VLAN 100 │        │
+    │   │   VNI: 10100     │              │   VNI: 10100     │        │
+    │   │                  │              │                  │        │
+    │   │ Community 201    │   VXLAN      │ Community 201    │        │
+    │   │   VNI: 10201     │◄═══════════►│   VNI: 10201     │        │
+    │   │                  │   Tunnel     │                  │        │
+    │   │ Isolated 301     │              │ Isolated 301     │        │
+    │   │   VNI: 10301     │              │   VNI: 10301     │        │
+    │   └──┬───────┬───────┘              └───────┬──────┬───┘        │
+    │      │       │                              │      │            │
+    │   ┌──┴──┐ ┌──┴──┐                      ┌───┴──┐ ┌─┴────┐      │
+    │   │Web-1│ │VM-A │                      │Web-3│ │VM-B  │      │
+    │   │C:201│ │I:301│                      │C:201│ │I:301 │      │
+    │   └─────┘ └─────┘                      └─────┘ └──────┘      │
+    │                                                                  │
+    │   Web-1 (Leaf 1) ←→ Web-3 (Leaf 2): ✓ Community across fabric  │
+    │   VM-A (Leaf 1) → VM-B (Leaf 2):    ✗ Isolated across fabric   │
+    │   VM-A → Web-1:                      ✗ Isolated → Community     │
+    └──────────────────────────────────────────────────────────────────┘
+```
+
+#### PVLAN + VXLAN Configuration on NX-OS
+
+```
+! === PVLAN VNI Mapping ===
+vlan 100
+  name PVLAN-PRIMARY
+  private-vlan primary
+  vn-segment 10100                       ! Primary VLAN → VNI
+
+vlan 201
+  name PVLAN-COMMUNITY-WEB
+  private-vlan community
+  vn-segment 10201                       ! Community VLAN → VNI
+
+vlan 301
+  name PVLAN-ISOLATED-VMS
+  private-vlan isolated
+  vn-segment 10301                       ! Isolated VLAN → VNI
+
+vlan 100
+  private-vlan association 201,301
+
+! === NVE Interface with PVLAN VNIs ===
+interface nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback1
+  member vni 10100
+    ingress-replication protocol bgp
+  member vni 10201
+    ingress-replication protocol bgp
+  member vni 10301
+    ingress-replication protocol bgp
+
+! === EVPN Configuration for PVLAN VNIs ===
+evpn
+  vni 10100 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 10201 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+  vni 10301 l2
+    rd auto
+    route-target import auto
+    route-target export auto
+
+! === SVI with Anycast Gateway + PVLAN Mapping ===
+fabric forwarding anycast-gateway-mac 0000.2222.3333
+
+interface Vlan 100
+  no shutdown
+  vrf member TENANT-A
+  ip address 10.10.10.1/24
+  private-vlan mapping 201,301
+  fabric forwarding mode anycast-gateway
+  ip local-proxy-arp
+```
+
+#### Benefits of PVLAN + VXLAN
+
+| Benefit | Description |
+|---------|-------------|
+| **Fabric-wide isolation** | Isolated/community rules enforced across all leaf switches, not just one |
+| **Scalable micro-segmentation** | Thousands of isolated VMs across the fabric, one subnet |
+| **Anycast gateway + PVLAN** | Every leaf is the gateway AND enforces PVLAN rules |
+| **No ACL overhead** | Isolation is hardware-enforced at each VTEP |
+| **Multi-tenant security** | Each tenant in isolated VLAN, shared infrastructure |
+| **Complements EVPN** | PVLAN VNIs use standard EVPN Type 2/3 routes |
+
+#### Limitations of PVLAN in VXLAN
+
+- **NX-OS version:** Requires NX-OS 9.3(3) or later on Nexus 9000
+- **ACI mode:** PVLANs work differently in ACI (uses micro-segmentation contracts instead)
+- **vPC + PVLAN:** Supported but requires consistent PVLAN configuration on both peers
+- **Not all platforms:** Check the Cisco compatibility matrix for PVLAN + VXLAN support per ASIC generation
+- **Complexity:** Adds another layer of configuration on top of VXLAN EVPN
+
+### PVLAN Quick Reference
+
+```
+PVLAN Hierarchy:
+    Primary VLAN (e.g., 100)
+    ├── Community VLAN 201  → Hosts can talk within group + promiscuous
+    ├── Community VLAN 202  → Hosts can talk within group + promiscuous
+    └── Isolated VLAN 301   → Hosts can ONLY talk to promiscuous
+
+Port Types:
+    Promiscuous → Talks to all (gateway/router)
+    Community   → Talks to same community + promiscuous
+    Isolated    → Talks to promiscuous only
+
+One-liner rule:
+    "Isolated = alone. Community = friends. Promiscuous = talks to everyone."
+```
+
 ---
 
 # PART 4: LAYER 3 TECHNOLOGIES
@@ -3035,6 +3522,11 @@ In a typical enterprise, both technologies are used simultaneously in different 
 | **PBB** | Provider Backbone Bridging — IEEE 802.1ah MAC-in-MAC encapsulation |
 | **DCI** | Data Center Interconnect — extending L2/L3 between data centers |
 | **MEF** | Metro Ethernet Forum — standards body defining Ethernet services |
+| **PVLAN** | Private VLAN — L2 micro-segmentation subdividing a primary VLAN into secondary VLANs |
+| **Primary VLAN** | The parent VLAN in a PVLAN domain that contains all secondary VLANs |
+| **Community VLAN** | Secondary VLAN where hosts can talk to same community + promiscuous ports |
+| **Isolated VLAN** | Secondary VLAN where hosts can ONLY talk to promiscuous ports |
+| **Promiscuous Port** | PVLAN port that can communicate with all secondary VLANs (gateway/router) |
 
 ---
 
