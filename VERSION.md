@@ -11,7 +11,48 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ---
 
-## Changelog
+### v2.0.0 (2026-02-18) - DAD, EVPN Guide, Stacking vs VPC
+
+**New Content Added:**
+
+**Section 3.7: Dual-Active Detection (DAD) (~200 lines)**
+- Full theory of DAD: detection, recovery, restoration lifecycle
+- All DAD detection methods (DAD Link, Peer-Keepalive, ePAgP, BFD, Fast Hello)
+- DAD in vPC (Nexus) with peer-link/keepalive decision matrix and ASCII diagrams
+- DAD in StackWise Virtual (Catalyst 9000) with SVL vs DAD link detection flow
+- DAD in VSS (Catalyst 6500) for legacy reference
+- Cross-technology comparison table (vPC vs SVL vs VSS)
+- Best practices and verification commands
+
+**Part 15: EVPN Comprehensive Guide (~350 lines)**
+- What is EVPN — full theory with architecture diagram
+- 4 Types of EVPN: EVPN-VXLAN, EVPN-MPLS, EVPN-SR, EVPN-PBB with comparison table
+- Where EVPN is used: DC fabrics, DCI, service provider, campus, multi-cloud
+- 6 Real-world use cases: multi-tenant cloud, financial trading, 5G mobile backhaul, enterprise DC migration, disaster recovery, Kubernetes/container networking
+- EVPN service types (E-LAN, E-LINE, E-TREE) with diagrams
+
+**Part 16: Stacking vs VPC — Complete Comparison (~350 lines)**
+- What is stacking — all StackWise generations table
+- What is vPC — architecture recap
+- 15-aspect detailed comparison table
+- Use cases: where stacking is used (4 scenarios with diagrams)
+- Use cases: where vPC is used (4 scenarios with diagrams)
+- Pros and cons for both technologies
+- Limitations (9 for stacking, 9 for vPC)
+- Device compatibility tables (which platforms support stacking vs vPC)
+- Decision matrix flowchart
+- Real-world coexistence architecture diagram
+
+**Other Updates:**
+- Table of Contents updated with Parts 15-16
+- Glossary expanded with 17 new terms (DAD, SVL, MEC, ePAgP, VSS, VPLS, VPWS, E-LAN, E-LINE, E-TREE, SR, SRv6, PBB, DCI, MEF)
+- Study plan expanded from 5 days to 6 days
+- continue.md updated with all new topics and practice questions
+- README.md updated with new parts, study plan, and interview topics
+
+**Stats:** Guide grew from 2,036 lines (v1.3.1) to 3,054 lines (v2.0.0)
+
+---
 
 ### v1.3.1 (2026-02-14) - Professional Branding Badges
 
@@ -104,10 +145,12 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ---
 
-### Planned for v2.0.0
+### Planned for v3.0.0
 - ACI mode deep dive
 - VXLAN Multi-Site configuration
-- Additional lab exercises
+- Additional lab exercises with topology files
 - Troubleshooting flowcharts
 - Ansible/Terraform automation examples
 - Streaming telemetry configuration
+- EVPN-MPLS lab configuration
+- StackWise Virtual lab exercises
