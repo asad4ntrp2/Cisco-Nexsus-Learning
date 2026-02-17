@@ -1,7 +1,7 @@
 # Cisco Nexus Product Family - Comprehensive Interview Preparation Guide
 
 > **Purpose:** Deep-dive study guide for a senior-level Cisco Nexus/Data Center interview
-> **Author:** Asad Yaseen (asad4ntrp2@gmail.com)
+> **Author:** Compiled from Cisco official documentation and technical resources
 > **Date:** February 2026
 
 ---
@@ -22,6 +22,8 @@
 12. [Part 12: VXLAN vs Legacy Networks](#part-12-vxlan-vs-legacy-networks)
 13. [Part 13: Clos Fabric Architecture](#part-13-clos-fabric-architecture)
 14. [Part 14: Interview Tips and Common Questions](#part-14-interview-tips)
+15. [Part 15: EVPN Comprehensive Guide](#part-15-evpn-comprehensive-guide)
+16. [Part 16: Stacking vs VPC — Complete Comparison](#part-16-stacking-vs-vpc)
 
 ---
 
@@ -498,6 +500,241 @@ interface Ethernet1/1
   storm-control unicast level 10.00
   storm-control action trap              ! Send SNMP trap
   storm-control action shutdown          ! Shut interface on violation
+```
+
+## 3.7 Dual-Active Detection (DAD) — Preventing Split-Brain
+
+### What is Dual-Active Detection?
+
+Dual-Active Detection (DAD) is a **safety mechanism** that prevents the most dangerous failure scenario in any multi-chassis redundancy system: **split-brain** (also called dual-active). In a split-brain scenario, both chassis believe they are the active/primary device and independently forward traffic, causing:
+- **Duplicate IP addresses** on the network
+- **MAC address flapping** across ports
+- **Layer 2 loops** and broadcast storms
+- **Black-holed traffic** and inconsistent forwarding
+- **Data corruption** in stateful applications
+
+DAD exists in multiple Cisco technologies: **vPC** (Nexus), **StackWise Virtual** (Catalyst 9000), and **VSS** (Catalyst 6500/4500). While each implementation differs slightly, the core concept is the same: **detect when both devices become active and immediately shut one down to restore a single control plane**.
+
+### How DAD Works — Theory
+
+The DAD mechanism operates through a series of steps:
+
+1. **Normal Operation:** One device is Active/Primary, the other is Standby/Secondary. A control link (peer-link, StackWise Virtual link, or VSL) synchronizes state between them.
+
+2. **Control Link Failure:** The connection between the two devices breaks. The Standby/Secondary device can no longer hear from the Active/Primary.
+
+3. **Secondary Promotion:** The Standby/Secondary device assumes the Active/Primary has failed and promotes itself to Active. Now both devices are Active — this is the **dual-active** condition.
+
+4. **DAD Detection:** A separate, independent detection mechanism (DAD link) discovers that the other device is still alive and also Active.
+
+5. **Recovery Action:** The device that detects the dual-active condition (typically the one that was originally Standby) enters **recovery mode** — it shuts down all its user-facing interfaces, keeping only the DAD link and management interfaces alive. This restores a single Active device on the network.
+
+6. **Restoration:** When the original control link is restored, the recovering device reloads or resynchronizes and resumes its Standby role.
+
+### DAD Detection Methods
+
+There are multiple ways to detect a dual-active condition. Each serves as an independent channel to verify the peer's status:
+
+| Method | How It Works | Used In |
+|--------|-------------|---------|
+| **DAD Link (Dedicated L2)** | A direct Ethernet link between the two chassis carrying BPDUs or special DAD frames. If the peer's BPDUs/frames are received, dual-active is detected | StackWise Virtual, VSS |
+| **Peer-Keepalive (L3)** | A Layer 3 heartbeat (UDP) over mgmt0 or a routed interface. If keepalive is received but peer-link is down, the Secondary knows the Primary is alive | vPC |
+| **Enhanced PAgP (EPAGP)** | Uses PAgP messages on port channels to downstream switches. The downstream switch relays the Active ID; if two different Active IDs appear, dual-active is detected | VSS |
+| **IP-based (BFD/ICMP)** | Fast heartbeat probes over a separate IP path to detect peer liveness | Some StackWise Virtual configs |
+| **Fast Hello (UDLD-like)** | Rapid L2 hello frames on a dedicated link, detecting peer within milliseconds | StackWise Virtual |
+
+### DAD in vPC (Nexus)
+
+In vPC, the **Peer-Keepalive link** serves as the DAD mechanism. It is a Layer 3 heartbeat between the two vPC peers, completely independent of the peer-link.
+
+```
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                    vPC Domain                                    │
+    │                                                                  │
+    │   ┌──────────────┐                    ┌──────────────┐          │
+    │   │   Nexus A     │    Peer-Link      │   Nexus B     │          │
+    │   │  (PRIMARY)    │◄════════════════►│  (SECONDARY)  │          │
+    │   │              │  (Port-Channel)    │              │          │
+    │   │   10.1.1.1   │                    │   10.1.1.2   │          │
+    │   └──┬──┬──┬──┬──┘                    └──┬──┬──┬──┬──┘          │
+    │      │  │  │  │    Peer-Keepalive        │  │  │  │             │
+    │      │  │  │  │◄ ─ ─ (DAD) ─ ─ ─ ─ ─ ─►│  │  │  │             │
+    │      │  │  │  │    (mgmt0: UDP 3200)     │  │  │  │             │
+    │      │  │  │  │                           │  │  │  │             │
+    │      │  │  │  │   ┌─────────────────┐    │  │  │  │             │
+    │      │  │  │  └───┤  vPC Member 10   ├───┘  │  │  │             │
+    │      │  │  │      │  (LACP to host)  │      │  │  │             │
+    │      │  │  │      └─────────────────┘      │  │  │             │
+    │      │  │  └───── vPC Member 20 ───────────┘  │  │             │
+    │      │  └──────── vPC Member 30 ──────────────┘  │             │
+    │      └─────────── Orphan Port ───────────────────┘             │
+    └─────────────────────────────────────────────────────────────────┘
+
+    DAD Decision Matrix (vPC):
+    ┌──────────────────┬───────────────┬─────────────────────────────┐
+    │   Peer-Link      │  Keepalive    │  Action                     │
+    ├──────────────────┼───────────────┼─────────────────────────────┤
+    │   UP             │  UP           │  Normal operation           │
+    │   UP             │  DOWN         │  Warning only (no impact)   │
+    │   DOWN           │  UP           │  Secondary suspends vPC     │
+    │                  │               │  ports (DAD triggered)      │
+    │   DOWN           │  DOWN         │  SPLIT-BRAIN! Both active   │
+    │                  │               │  (most dangerous scenario)  │
+    └──────────────────┴───────────────┴─────────────────────────────┘
+```
+
+**vPC DAD Behavior Step-by-Step:**
+
+1. Both peers exchange keepalive messages every 1 second (default) via mgmt0
+2. If the **peer-link fails** but keepalive is **still received**:
+   - Primary knows: "My peer is alive but our data path is down"
+   - Secondary knows: "My peer is alive, I must suspend my vPC ports"
+   - **Secondary shuts down all vPC member ports** (NOT orphan ports on itself)
+   - This prevents duplicate forwarding — only the Primary serves traffic
+3. If the **peer-link fails** AND keepalive **also fails**:
+   - Both switches assume the other has crashed
+   - Both keep all ports UP — **SPLIT-BRAIN** occurs
+   - This is why peer-link and keepalive MUST use **physically independent paths**
+
+**vPC Keepalive Configuration (DAD):**
+
+```
+vpc domain 100
+  peer-keepalive destination 10.201.182.26 source 10.201.182.25 \
+    vrf management                         ! Use mgmt VRF
+  peer-keepalive interval 1000             ! 1 second (default)
+  peer-keepalive timeout 5                 ! 5 seconds to declare dead
+
+  ! Auto-recovery: If both switches reboot simultaneously,
+  ! one will recover vPC after this delay
+  auto-recovery reload-delay 240
+```
+
+### DAD in StackWise Virtual (Catalyst 9000)
+
+In StackWise Virtual (SVL), a **dedicated DAD link** provides split-brain detection. This is a separate physical connection from the StackWise Virtual Link (SVL).
+
+```
+    ┌─────────────────────────────────────────────────────────────────┐
+    │             StackWise Virtual Domain                             │
+    │                                                                  │
+    │   ┌──────────────┐                    ┌──────────────┐          │
+    │   │  Catalyst A   │  StackWise Virtual │  Catalyst B   │          │
+    │   │  (ACTIVE)     │  Link (SVL)        │  (STANDBY)    │          │
+    │   │              │◄══════════════════►│              │          │
+    │   │  Switch 1    │  (40G/100G)         │  Switch 2    │          │
+    │   │              │                     │              │          │
+    │   │              │    DAD Link          │              │          │
+    │   │              │◄─ ─ ─ ─ ─ ─ ─ ─ ─►│              │          │
+    │   │              │  (Dedicated L2/L3)   │              │          │
+    │   └──┬──┬──┬─────┘                     └─────┬──┬──┬──┘          │
+    │      │  │  │         Looks like ONE          │  │  │             │
+    │      │  │  │         switch to the            │  │  │             │
+    │      │  │  │         network                  │  │  │             │
+    │      │  │  └──────── MEC ────────────────────┘  │  │             │
+    │      │  └─────────── MEC ───────────────────────┘  │             │
+    │      └──────────── Single-attached ────────────────┘             │
+    └─────────────────────────────────────────────────────────────────┘
+
+    MEC = Multi-chassis EtherChannel (like vPC member)
+
+    DAD Detection Flow:
+    ┌──────────┐     SVL Fails     ┌──────────┐
+    │ Active   │ ──────X────────── │ Standby  │
+    │ Switch 1 │                   │ Switch 2 │
+    │          │    DAD Link       │          │
+    │          │◄─────────────────►│  → NOW   │
+    │          │  "Are you alive?" │   ACTIVE │
+    │          │  "Yes, I am!"     │          │
+    │          │                   │ RECOVERY │
+    │  Stays   │                   │ MODE:    │
+    │  Active  │                   │ Shuts    │
+    │          │                   │ all user │
+    │          │                   │ ports    │
+    └──────────┘                   └──────────┘
+```
+
+**StackWise Virtual DAD Methods:**
+
+1. **DAD Link (Recommended):** A direct physical connection between chassis. Carries special DAD messages. If both chassis detect each other as Active through this link, the one with the lower priority (or the one that was Standby) enters recovery mode.
+
+2. **Enhanced PAgP (ePAgP):** Uses downstream switches as witnesses. The downstream switch sees PAgP messages from both chassis; if it detects two different Active chassis IDs, it reports back.
+
+3. **Fast Hello:** Rapid hellos on a dedicated interface for sub-second detection.
+
+**StackWise Virtual DAD Configuration (Catalyst 9000):**
+
+```
+! === StackWise Virtual Link ===
+stackwise-virtual
+  domain 10
+  dual-active detection pagp           ! Enable ePAgP-based DAD
+  dual-active detection pagp trust channel-group 1
+
+! === Dedicated DAD Link ===
+interface TenGigabitEthernet1/0/24
+  dual-active fast-hello                ! Fast hello DAD on this interface
+
+! === OR: IP-based DAD ===
+dual-active recovery-reload-delay 120   ! Wait before reloading
+```
+
+### DAD in VSS (Legacy Catalyst 6500 — For Reference)
+
+VSS (Virtual Switching System) was the predecessor to StackWise Virtual on Catalyst 6500/4500:
+
+```
+    ┌──────────────┐    VSL    ┌──────────────┐
+    │  Cat 6500 A  │◄════════►│  Cat 6500 B  │
+    │   (Active)   │          │  (Standby)   │
+    │              │  DAD     │              │
+    │              │◄── ── ──►│              │
+    └──────────────┘          └──────────────┘
+
+    DAD Methods in VSS:
+    1. Enhanced PAgP (ePAgP) via downstream switches
+    2. Fast Hello on dedicated interfaces
+    3. BFD (Bidirectional Forwarding Detection)
+```
+
+### DAD Comparison Across Technologies
+
+| Feature | vPC (Nexus) | StackWise Virtual (Cat 9K) | VSS (Cat 6500) |
+|---------|------------|---------------------------|----------------|
+| **DAD Mechanism** | Peer-Keepalive (L3 UDP) | DAD Link / ePAgP / Fast Hello | ePAgP / Fast Hello / BFD |
+| **Detection Speed** | 3-5 seconds (default) | Sub-second (Fast Hello) | 1-3 seconds |
+| **Recovery Action** | Secondary suspends vPC ports | Standby shuts all user ports + reloads | Standby shuts all ports + reloads |
+| **Control Link** | Peer-Link (Port Channel) | SVL (40G/100G) | VSL (10G) |
+| **Appears as One Switch** | No (two mgmt planes) | Yes (single mgmt plane) | Yes (single mgmt plane) |
+| **Platforms** | Nexus 3000/5000/7000/9000 | Catalyst 9300/9400/9500/9600 | Catalyst 6500/4500 (EOL) |
+| **Recommended DAD** | mgmt0 keepalive in VRF management | Fast Hello on dedicated link | ePAgP via downstream |
+
+### DAD Best Practices
+
+1. **Always configure DAD** — Never rely solely on the main control link (peer-link/SVL)
+2. **Use physically independent paths** — DAD link must NOT share the same cable bundle, line card, or power domain as the control link
+3. **vPC:** Use mgmt0 for keepalive (completely out-of-band from peer-link)
+4. **StackWise Virtual:** Use a dedicated DAD link on a separate line card/module from SVL ports
+5. **Test DAD regularly** — Simulate peer-link failures during maintenance windows to verify DAD triggers correctly
+6. **Monitor DAD state** — Include DAD link status in your monitoring/alerting system
+
+### DAD Verification Commands
+
+```
+! === vPC DAD Verification ===
+show vpc peer-keepalive            ! Keepalive status, timers, last heard
+show vpc role                      ! Current role (Primary/Secondary)
+show vpc                           ! Overall vPC status including keepalive
+
+! === StackWise Virtual DAD Verification ===
+show stackwise-virtual dual-active-detection  ! DAD method and status
+show stackwise-virtual                         ! SVL and DAD link status
+show switch                                    ! Switch roles (Active/Standby)
+show redundancy                                ! Redundancy state
+
+! === VSS DAD Verification ===
+show switch virtual dual-active summary
+show switch virtual role
 ```
 
 ---
@@ -1993,6 +2230,772 @@ show vpc orphan-ports                   ! Orphan port status
 
 ---
 
+# PART 15: EVPN COMPREHENSIVE GUIDE
+
+## 15.1 What is EVPN?
+
+**EVPN (Ethernet Virtual Private Network)** is a standards-based **control-plane technology** (RFC 7432) that uses **BGP** to distribute Layer 2 (MAC) and Layer 3 (IP) reachability information across a network. It provides a unified framework for delivering both L2 and L3 VPN services over various transport technologies.
+
+**In simple terms:** EVPN is a way for network devices to share MAC address tables and IP routing information using BGP, instead of relying on traditional flooding and learning. Think of it as upgrading your network's "address book" from a phone chain (everyone calls everyone) to a centralized database (BGP distributes entries to exactly who needs them).
+
+### Why EVPN Was Created
+
+Before EVPN, there were several technologies for extending Layer 2 across a network, but each had significant limitations:
+
+| Legacy Technology | Problem |
+|-------------------|---------|
+| **VPLS (Virtual Private LAN Service)** | Flood-and-learn, no control-plane MAC learning, poor multihoming, full-mesh required |
+| **OTV (Overlay Transport Virtualization)** | Cisco proprietary, limited to DCI, no integrated L3 |
+| **FabricPath** | Cisco proprietary, L2 only, no L3 integration |
+| **SPB (Shortest Path Bridging)** | Limited vendor adoption, no BGP integration |
+| **Traditional VXLAN (flood-and-learn)** | No control plane, multicast dependency, no ARP suppression |
+
+EVPN solves all of these by providing:
+- **Control-plane MAC learning** (no flooding)
+- **Integrated L2 + L3** services in one framework
+- **Active-active multihoming** with fast convergence
+- **ARP/ND suppression** (reduces broadcast traffic dramatically)
+- **MAC mobility** for workload migration
+- **Multi-vendor interoperability** (standards-based RFC)
+- **Works over multiple transports** (VXLAN, MPLS, GRE, Segment Routing)
+
+### EVPN Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                         EVPN Architecture                            │
+│                                                                      │
+│   ┌──────────────────────────────────────────────────────────────┐   │
+│   │                    Control Plane (BGP)                        │   │
+│   │                                                              │   │
+│   │   MP-BGP with AFI 25 (L2VPN), SAFI 70 (EVPN)               │   │
+│   │   Carries: MAC addresses, IP addresses, IP prefixes          │   │
+│   │   Uses: Route Distinguishers (RD), Route Targets (RT)       │   │
+│   │   Route Types: 1 (EAD), 2 (MAC/IP), 3 (IMET),             │   │
+│   │                4 (ES), 5 (IP Prefix)                        │   │
+│   └──────────────────────────────────────────────────────────────┘   │
+│                              │                                       │
+│                    ┌─────────┴─────────┐                            │
+│                    │  Data Plane        │                            │
+│                    │  (Encapsulation)   │                            │
+│                    └─────────┬─────────┘                            │
+│                              │                                       │
+│            ┌─────────────────┼─────────────────┐                    │
+│            │                 │                 │                     │
+│      ┌─────┴─────┐   ┌─────┴─────┐   ┌──────┴─────┐              │
+│      │   VXLAN    │   │   MPLS    │   │  Segment   │              │
+│      │           │   │           │   │  Routing   │              │
+│      │ UDP 4789  │   │ Label     │   │  SRv6/     │              │
+│      │ VNI       │   │ Switched  │   │  SR-MPLS   │              │
+│      └───────────┘   └───────────┘   └────────────┘              │
+│                                                                      │
+│   Same EVPN control plane works over ANY of these transports!       │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+## 15.2 Types of EVPN
+
+EVPN is not a single technology — it is a framework with multiple deployment models. The type depends on the **transport encapsulation** used in the data plane:
+
+### Type 1: EVPN-VXLAN (Most Common Today)
+
+**What it is:** EVPN as the control plane for VXLAN tunnels. This is what Cisco Nexus, Arista, Juniper QFX, and most modern data center switches use.
+
+**Transport:** VXLAN (UDP port 4789)
+
+**Where used:** Data center leaf-spine fabrics, campus fabrics
+
+```
+  ┌────────┐                                    ┌────────┐
+  │ Leaf 1 │═══════ VXLAN Tunnel ══════════════│ Leaf 2 │
+  │ (VTEP) │   Outer IP + UDP + VXLAN Header   │ (VTEP) │
+  └───┬────┘        VNI = 10010                 └───┬────┘
+      │         BGP EVPN Control Plane              │
+  ┌───┴───┐                                     ┌───┴───┐
+  │Host A │                                     │Host B │
+  └───────┘                                     └───────┘
+```
+
+**Key characteristics:**
+- VNI (24-bit) identifies the EVPN instance in the data plane
+- Uses ingress replication or multicast for BUM traffic
+- Symmetric IRB for inter-subnet routing
+- Anycast gateway for distributed default gateway
+- Defined in RFC 8365
+
+### Type 2: EVPN-MPLS (Service Provider Networks)
+
+**What it is:** EVPN as the control plane for MPLS-based L2VPN services. Replaces legacy VPLS.
+
+**Transport:** MPLS Label Switching
+
+**Where used:** Service provider metro/core networks, enterprise WAN
+
+```
+  ┌────────┐                                    ┌────────┐
+  │  PE 1  │═══════ MPLS LSP ═════════════════│  PE 2  │
+  │        │   MPLS Labels (Transport + VPN)   │        │
+  └───┬────┘        BGP EVPN signaling          └───┬────┘
+      │                                              │
+  ┌───┴───┐                                     ┌───┴───┐
+  │ CE 1  │    Customer Edge                    │ CE 2  │
+  └───────┘                                     └───────┘
+```
+
+**Key characteristics:**
+- MPLS labels identify the EVPN instance in the data plane
+- Provider Edge (PE) routers perform encapsulation
+- Full MPLS infrastructure required (LDP or Segment Routing)
+- Supports both VPWS (point-to-point) and VPLS (multipoint)
+- Superior convergence and multihoming vs legacy VPLS
+
+### Type 3: EVPN-SR (Segment Routing)
+
+**What it is:** EVPN combined with Segment Routing (SR-MPLS or SRv6) for the data plane. The next evolution for service providers.
+
+**Transport:** SR-MPLS labels or SRv6 (IPv6 encapsulation)
+
+**Where used:** Next-gen service provider networks, 5G transport, large enterprise WANs
+
+```
+  ┌────────┐                                    ┌────────┐
+  │  PE 1  │═══════ SR Path ══════════════════│  PE 2  │
+  │        │   SID List (Segment Routing)      │        │
+  └───┬────┘        BGP EVPN + SR-TE           └───┬────┘
+      │                                              │
+  ┌───┴───┐                                     ┌───┴───┐
+  │ CE 1  │                                     │ CE 2  │
+  └───────┘                                     └───────┘
+```
+
+**Key characteristics:**
+- No LDP required — uses Segment Routing for label distribution
+- Traffic Engineering (SR-TE) for path optimization
+- SRv6 variant uses IPv6 headers (no MPLS labels at all)
+- Simplified operations compared to EVPN-MPLS
+- Supported on Cisco NCS, ASR, 8000 series
+
+### Type 4: EVPN-PBB (Provider Backbone Bridging)
+
+**What it is:** EVPN with PBB (802.1ah MAC-in-MAC) encapsulation. Mostly used in service provider metro Ethernet.
+
+**Transport:** PBB (MAC-in-MAC)
+
+**Where used:** Carrier Ethernet, metro networks (niche)
+
+**Key characteristics:**
+- MAC address scalability through MAC-in-MAC encapsulation
+- Separates customer MACs from backbone MACs
+- Limited deployment — largely superseded by EVPN-VXLAN and EVPN-MPLS
+
+### EVPN Type Comparison
+
+| Feature | EVPN-VXLAN | EVPN-MPLS | EVPN-SR | EVPN-PBB |
+|---------|-----------|-----------|---------|----------|
+| **Primary Use** | Data Center | Service Provider | Next-gen SP | Metro Ethernet |
+| **Transport** | UDP/VXLAN | MPLS Labels | SR-MPLS/SRv6 | MAC-in-MAC |
+| **Encapsulation Overhead** | ~50 bytes | ~8-16 bytes | ~8-40 bytes | ~22 bytes |
+| **Scalability** | 16M VNIs | Limited by labels | High (SID space) | Very high |
+| **TE Support** | Limited | RSVP-TE | Native SR-TE | None |
+| **Infrastructure** | IP-only underlay | Full MPLS network | SR-enabled routers | PBB-capable |
+| **Multivendor** | Excellent | Good | Growing | Limited |
+| **Typical Platforms** | Nexus, Arista, QFX | ASR, NCS, Juniper MX | NCS, 8000, XRd | 7600, ASR |
+
+## 15.3 Where is EVPN Used?
+
+EVPN is used across virtually every segment of modern networking:
+
+### 1. Data Center Fabrics (EVPN-VXLAN)
+
+The most common deployment. Every modern data center fabric uses EVPN-VXLAN:
+
+```
+                    ┌─────────────────────────────────┐
+                    │      Data Center Fabric          │
+                    │                                  │
+                    │   ┌───────┐    ┌───────┐        │
+                    │   │Spine 1│    │Spine 2│  (RR)  │
+                    │   └─┬─┬─┬─┘    └─┬─┬─┬─┘        │
+                    │     │ │ │        │ │ │           │
+                    │   ┌─┴─┴─┴────────┴─┴─┴─┐        │
+                    │   │     EVPN-VXLAN      │        │
+                    │   │     Overlay          │        │
+                    │   └─┬─────┬─────┬──────┘        │
+                    │     │     │     │                │
+                    │  ┌──┴──┐ ┌┴──┐ ┌┴──┐            │
+                    │  │Leaf1│ │L2 │ │L3 │  (VTEPs)   │
+                    │  └─────┘ └───┘ └───┘            │
+                    │    │       │      │              │
+                    │  Servers  VMs  Containers        │
+                    └─────────────────────────────────┘
+```
+
+**Use cases:**
+- Multi-tenant cloud hosting (AWS, Azure, GCP use EVPN-VXLAN internally)
+- Enterprise private data centers
+- Hyperconverged infrastructure (HCI)
+- Container/Kubernetes networking overlay
+
+### 2. Data Center Interconnect (DCI)
+
+Extending L2/L3 services between multiple data centers:
+
+```
+    ┌──────────────┐                        ┌──────────────┐
+    │  Data Center  │    EVPN Multi-Site     │  Data Center  │
+    │     East      │◄═══════════════════►│     West      │
+    │              │    (VXLAN or MPLS)     │              │
+    │  EVPN Fabric  │                        │  EVPN Fabric  │
+    └──────────────┘                        └──────────────┘
+         │                                        │
+    Border Gateway ◄──── BGP EVPN ────► Border Gateway
+```
+
+**Use cases:**
+- Disaster recovery (DR) — extend VLANs between sites for VM migration
+- Active-active data centers
+- Workload mobility (VMware vMotion across DCs)
+- Geo-redundant applications
+
+### 3. Service Provider Networks (EVPN-MPLS / EVPN-SR)
+
+Replacing legacy L2VPN services (VPLS, H-VPLS):
+
+```
+    ┌──────┐         ┌──────────────────────┐         ┌──────┐
+    │ CE-A │─────────│    SP MPLS/SR Core    │─────────│ CE-B │
+    │      │   PE-1  │                      │  PE-2   │      │
+    └──────┘         │    EVPN Signaling     │         └──────┘
+                     │    MPLS/SR Transport  │
+                     └──────────────────────┘
+```
+
+**Use cases:**
+- Enterprise L2VPN services (E-LAN, E-LINE, E-TREE)
+- Mobile backhaul (5G/LTE cell tower connectivity)
+- Wholesale Ethernet services
+- Cloud interconnect services (connecting enterprises to cloud providers)
+
+### 4. Campus Networks
+
+Emerging use case — extending EVPN-VXLAN to the campus:
+
+**Use cases:**
+- Cisco SD-Access (uses LISP+VXLAN but EVPN-VXLAN is gaining traction)
+- Arista Campus (uses EVPN-VXLAN natively)
+- Juniper campus (EVPN-VXLAN with Mist)
+- Multi-site campus with consistent policy across buildings
+
+### 5. Multi-Cloud Networking
+
+Connecting on-premises data centers to public clouds:
+
+**Use cases:**
+- Extending EVPN to AWS (Transit Gateway + VXLAN)
+- Azure ExpressRoute with EVPN peering
+- Hybrid cloud workload placement
+- Consistent network policy across on-prem and cloud
+
+## 15.4 Real-World Use Cases and Examples
+
+### Use Case 1: Multi-Tenant Cloud Provider
+
+**Scenario:** A cloud hosting provider operates 3 data centers serving 500+ tenants. Each tenant needs isolated L2/L3 networks that can span across data centers.
+
+**Why EVPN:** VLAN-based approach fails at 4,094 VLANs. EVPN-VXLAN provides 16 million VNIs, VRF-based tenant isolation, and native multi-site capability.
+
+```
+    Tenant A: VRF-A, VNI 10001-10050 (50 subnets)
+    Tenant B: VRF-B, VNI 20001-20030 (30 subnets)
+    Tenant C: VRF-C, VNI 30001-30100 (100 subnets)
+    ...
+    Tenant N: VRF-N, VNI N0001-N00xx
+
+    All tenants isolated via VRF + Route Targets
+    Each tenant's traffic VXLAN-encapsulated with unique VNI
+    Inter-tenant routing only when explicitly configured via RT import
+```
+
+**Real example:** Major cloud providers and large colocation facilities (Equinix, Digital Realty) use EVPN-VXLAN for tenant isolation.
+
+### Use Case 2: Financial Trading Floor
+
+**Scenario:** A global investment bank needs sub-millisecond latency between trading applications across two data centers (primary and DR), with instant workload mobility.
+
+**Why EVPN:**
+- Anycast gateway eliminates HSRP failover delay
+- L2 extension via VXLAN Multi-Site enables live VM migration between DCs
+- ECMP across all spine links maximizes available bandwidth
+- ARP suppression reduces broadcast storms that could add latency jitter
+
+**Real example:** Major banks and exchanges use EVPN-VXLAN fabrics with Nexus 9000 or Arista 7000 series for trading infrastructure.
+
+### Use Case 3: 5G Mobile Backhaul (Service Provider)
+
+**Scenario:** A mobile carrier needs to connect thousands of 5G cell sites to regional aggregation points, providing both L2 (Ethernet backhaul) and L3 (IP transport) services.
+
+**Why EVPN-MPLS/SR:**
+- EVPN replaces legacy VPLS for cell site connectivity
+- Active-active multihoming ensures zero-downtime if one aggregation router fails
+- Segment Routing provides traffic engineering for SLA guarantees
+- Single control plane (BGP EVPN) for both L2 and L3 services
+
+**Real example:** Tier-1 mobile operators deploying EVPN-SR for 5G transport on platforms like Cisco NCS 5500 and Nokia 7750-SR.
+
+### Use Case 4: Enterprise Data Center Migration
+
+**Scenario:** A large enterprise is migrating from a legacy 3-tier network (Catalyst 6500 + 4500 with VLANs, STP, HSRP) to a modern EVPN-VXLAN fabric.
+
+**Migration approach:**
+```
+    Phase 1: Deploy leaf-spine fabric alongside legacy
+    ┌──────────────┐        ┌──────────────────┐
+    │  Legacy 3-Tier│        │ New EVPN-VXLAN   │
+    │  (VLANs+STP)  │◄══════►│ Fabric (Nexus)   │
+    │              │  Trunk  │                  │
+    └──────────────┘  Link   └──────────────────┘
+
+    Phase 2: Migrate servers rack-by-rack to new leaf switches
+    Phase 3: Border leaf provides L3 connectivity between old and new
+    Phase 4: Decommission legacy switches
+```
+
+**Real example:** Enterprises across healthcare, manufacturing, and retail are actively migrating from Catalyst 6500/4500 networks to Nexus 9000 EVPN-VXLAN fabrics.
+
+### Use Case 5: Disaster Recovery with Stretched VLANs
+
+**Scenario:** A hospital network requires that critical healthcare applications (Epic, Cerner) can failover between two campuses 15km apart with minimal downtime.
+
+**Why EVPN:**
+- EVPN Multi-Site extends L2 domains between campuses over an IP backbone
+- VMs can vMotion between sites without IP address changes
+- Anycast gateway ensures no gateway failover delay
+- Type 5 routes advertise summary prefixes between sites for efficient routing
+
+```
+    Campus A (Primary)                    Campus B (DR)
+    ┌────────────────┐   WAN / Dark     ┌────────────────┐
+    │ EVPN Fabric    │   Fiber (L3)     │ EVPN Fabric    │
+    │                │◄════════════════►│                │
+    │ Border GW      │   EVPN Multi-    │ Border GW      │
+    │ (Nexus 9300)   │   Site BGP       │ (Nexus 9300)   │
+    └────────────────┘                  └────────────────┘
+    Epic App Server ─── vMotion ───────► Epic App Server
+    (10.1.1.50)         (same IP!)       (10.1.1.50)
+```
+
+### Use Case 6: Kubernetes/Container Networking
+
+**Scenario:** A tech company runs Kubernetes clusters across 200+ servers and needs network segmentation between different microservice environments (dev, staging, production).
+
+**Why EVPN:**
+- Each Kubernetes namespace maps to a VRF + set of VNIs
+- CNI plugins (Calico, Cilium) can integrate with hardware EVPN-VXLAN
+- Network policies enforced at both the fabric level (hardware ACLs) and pod level
+- Bare-metal Kubernetes nodes dual-homed via EVPN multihoming (ESI)
+
+## 15.5 EVPN Service Types (E-LAN, E-LINE, E-TREE)
+
+EVPN supports multiple Ethernet service types as defined by the MEF (Metro Ethernet Forum):
+
+| Service Type | MEF Name | EVPN Implementation | Topology |
+|-------------|----------|---------------------|----------|
+| **E-LINE** | Ethernet Virtual Private Line | EVPN-VPWS (RFC 8214) | Point-to-Point |
+| **E-LAN** | Ethernet Virtual Private LAN | EVPN (RFC 7432) | Multipoint-to-Multipoint |
+| **E-TREE** | Ethernet Virtual Private Tree | EVPN E-TREE (RFC 8317) | Hub-and-Spoke (rooted multipoint) |
+
+```
+    E-LINE (Point-to-Point):
+    Site A ◄════════════════► Site B
+    (One-to-one connection, like a leased line)
+
+    E-LAN (Multipoint):
+    Site A ◄════►┌────────┐◄════► Site C
+                 │  EVPN  │
+    Site B ◄════►│  Core  │◄════► Site D
+                 └────────┘
+    (Any-to-any, like a LAN switch)
+
+    E-TREE (Hub-and-Spoke):
+                 ┌── Site B (Leaf — can talk to Hub only)
+    Site A ◄════►│
+    (Hub/Root)   ├── Site C (Leaf — can talk to Hub only)
+                 │
+                 └── Site D (Leaf — can talk to Hub only)
+    (Hub can talk to all, Leaves cannot talk to each other)
+```
+
+---
+
+# PART 16: STACKING VS VPC — COMPLETE COMPARISON
+
+## 16.1 What is Stacking?
+
+**Stacking** is a technology that combines **multiple physical switches into a single logical switch** with a **unified management plane**. All member switches share one configuration, one IP address, one CLI session, one MAC address table, and one routing table. From the network's perspective, a stack of 8 switches looks and behaves like a single, very large switch.
+
+```
+    ┌─────────────────────────────────────────────────────────────┐
+    │                   Switch Stack (Single Logical Switch)       │
+    │                   One IP, One Config, One Mgmt Session       │
+    │                                                              │
+    │   ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐ │
+    │   │Switch 1 │◄══►│Switch 2 │◄══►│Switch 3 │◄══►│Switch 4 │ │
+    │   │(Active) │    │(Standby)│    │(Member) │    │(Member) │ │
+    │   └────┬────┘    └────┬────┘    └────┬────┘    └────┬────┘ │
+    │        │              │              │              │       │
+    │   48 ports       48 ports       48 ports       48 ports    │
+    │        = 192 total ports managed as ONE switch              │
+    │                                                              │
+    │   Stack Ring (Dedicated high-speed interconnect):            │
+    │   SW1 ══► SW2 ══► SW3 ══► SW4 ══► SW1 (ring topology)     │
+    └─────────────────────────────────────────────────────────────┘
+```
+
+### Stacking Technologies by Platform
+
+| Technology | Platform | Max Stack | Stack Bandwidth | Stack Cable |
+|-----------|----------|-----------|----------------|-------------|
+| **StackWise** | Catalyst 3750 (EOL) | 9 switches | 32 Gbps | Dedicated stack cable |
+| **StackWise Plus** | Catalyst 3750-X (EOL) | 9 switches | 64 Gbps | Dedicated stack cable |
+| **StackWise-160** | Catalyst 3850 | 9 switches | 160 Gbps | Dedicated stack cable |
+| **StackWise-480** | Catalyst 9200/9300 | 8 switches | 480 Gbps | Dedicated stack cable |
+| **StackWise-1T** | Catalyst 9300L | 8 switches | 1 Tbps | Dedicated stack cable |
+| **StackWise Virtual** | Catalyst 9400/9500/9600 | 2 switches | Via 10G/25G/40G/100G uplinks | Standard network cables |
+| **FlexStack** | Catalyst 2960-X/XR (EOL) | 8 switches | 80 Gbps | FlexStack module |
+
+> **Key distinction:** Traditional stacking (StackWise) uses **proprietary stack cables** on fixed switches, while **StackWise Virtual (SVL)** uses **standard Ethernet uplinks** on modular switches and only supports **2 members**.
+
+## 16.2 What is vPC?
+
+**vPC (Virtual Port Channel)** allows two physical Nexus switches to present **a single logical port channel** to downstream devices. Unlike stacking, the two switches maintain **independent management planes** — each has its own IP address, configuration, and CLI. They coordinate through a **peer-link** and **peer-keepalive** to forward traffic without loops.
+
+```
+    ┌──────────────┐                    ┌──────────────┐
+    │   Nexus A    │    Peer-Link       │   Nexus B    │
+    │  (Primary)   │◄══════════════════►│  (Secondary) │
+    │              │                    │              │
+    │  Own IP:     │   Keepalive (L3)   │  Own IP:     │
+    │  10.1.1.1    │◄─ ─ ─ ─ ─ ─ ─ ─ ►│  10.1.1.2    │
+    │              │                    │              │
+    │  Own Config  │                    │  Own Config  │
+    │  Own CLI     │                    │  Own CLI     │
+    └──┬──┬──┬─────┘                    └─────┬──┬──┬──┘
+       │  │  │                                │  │  │
+       │  │  └──────── vPC 10 ───────────────┘  │  │
+       │  └─────────── vPC 20 ──────────────────┘  │
+       └──────────── Orphan port                    │
+                                           Orphan port
+```
+
+## 16.3 What is the Difference Between Stacking and vPC?
+
+This is the core question. The fundamental difference is:
+
+- **Stacking = One brain, many bodies.** Multiple physical switches merge into a single logical device with a single control plane.
+- **vPC = Two brains, cooperating.** Two independent switches coordinate to present a unified port channel to downstream devices, but each maintains its own control plane.
+
+### Detailed Comparison
+
+| Aspect | Stacking (StackWise) | vPC (Nexus) |
+|--------|---------------------|-------------|
+| **Management Plane** | Single (one IP, one config, one CLI) | Dual (each switch has own IP, config, CLI) |
+| **Control Plane** | Single (one STP root, one routing instance) | Dual (each runs STP, routing independently) |
+| **Data Plane** | Unified (stack ring) | Coordinated (peer-link for cross-switch traffic) |
+| **Appears as** | One switch to the entire network | One port channel to downstream devices only |
+| **Number of Devices** | 2-9 (platform dependent) | Always exactly 2 |
+| **Interconnect** | Proprietary stack cables or SVL links | Standard port channel (peer-link) |
+| **Configuration** | One config file for entire stack | Two separate config files (must be kept consistent) |
+| **Upgrades** | Single ISSU (one switch at a time in stack) | Independent upgrades (ISSU per switch) |
+| **Failure Domain** | Entire stack (shared fate for control plane bugs) | Each switch independent (bug on one doesn't crash other) |
+| **L3 Routing** | One routing process, one RIB | Each switch has own routing process and RIB |
+| **STP** | One STP instance for entire stack | Each switch runs STP independently |
+| **Supported on** | Catalyst switches (campus) | Nexus switches (data center) |
+| **Scale** | Hundreds of ports (campus access/distribution) | Thousands of ports (data center spine/leaf) |
+| **Split-Brain Protection** | DAD (Dual-Active Detection) | Peer-Keepalive (split-brain prevention) |
+
+### How They Differ — Visual
+
+```
+    STACKING:                              vPC:
+    ┌─────────────────────┐              ┌────────┐    ┌────────┐
+    │   ONE Logical Switch │              │Switch A│    │Switch B│
+    │                     │              │(Own IP)│    │(Own IP)│
+    │  ┌────┐ ┌────┐     │              │Own Conf│    │Own Conf│
+    │  │ SW1│ │ SW2│     │              └───┬────┘    └───┬────┘
+    │  │    │ │    │     │                  │              │
+    │  │ Active│ │ Stby │     │              │   Peer-Link  │
+    │  └──┬─┘ └──┬┘     │              │◄═══════════►│
+    │     │      │       │                  │              │
+    │  One IP: 10.1.1.1  │              │   vPC 10    │
+    │  One Config         │              │◄────────────►│
+    │  One STP Root       │                  │   LACP      │
+    │  One Routing Table  │              ┌───┴────────────┴───┐
+    └─────────────────────┘              │   Server (sees     │
+                                         │   one port channel) │
+    Upstream sees ONE switch.            └────────────────────┘
+    Port channels terminate to
+    one logical entity.                  Upstream sees TWO switches
+                                         but one port channel.
+```
+
+## 16.4 Use Cases
+
+### Where Stacking is Used
+
+**1. Campus Access Layer (Most Common)**
+
+The primary use case for stacking is building high-density access layer closets:
+
+```
+    IDF/Wiring Closet:
+    ┌─────────────────────────────────────┐
+    │  Stack of 4x Catalyst 9300-48U      │
+    │  = 192 ports, one management IP     │
+    │  Connected to 2x distribution       │
+    │  switches via MEC (Multi-chassis    │
+    │  EtherChannel)                      │
+    └─────────────────────────────────────┘
+```
+
+- Reduce management overhead: 4 switches = 1 IP to monitor
+- Simplified cabling: MEC port channels span stack members
+- PoE for IP phones, APs, cameras across all stack members
+
+**2. Campus Distribution Layer**
+
+StackWise Virtual on Catalyst 9500 for distribution:
+
+```
+    ┌────────────┐     ┌────────────┐
+    │  Cat 9500  │ SVL │  Cat 9500  │  = ONE logical distribution switch
+    │  (Active)  │◄══►│  (Standby) │    with dual-active detection
+    └──────┬─────┘     └─────┬──────┘
+           │                 │
+    MEC to access stacks below
+```
+
+- Two physical chassis appear as one for STP simplicity
+- DAD link prevents split-brain
+- ISSU support for hitless upgrades
+
+**3. Small Branch Offices**
+
+Stack 2-3 Catalyst 9200 switches for a branch with 100-150 ports:
+- Single management point for remote branches
+- Reduces need for on-site IT expertise
+- Centrally managed via Catalyst Center / DNA Center
+
+**4. Server Room / Small Data Center (Fixed switches)**
+
+Stack Catalyst 9300 for server connectivity in small DC:
+- Cost-effective alternative to Nexus for small-scale
+- 480 Gbps stack bandwidth sufficient for 1G/10G server access
+
+### Where vPC is Used
+
+**1. Data Center Leaf Pairs (Most Common)**
+
+vPC is the standard for leaf switch redundancy in VXLAN EVPN fabrics:
+
+```
+    ┌─────────┐    ┌─────────┐
+    │ Spine 1 │    │ Spine 2 │
+    └──┬──┬───┘    └───┬──┬──┘
+       │  │            │  │
+    ┌──┴──┴────────────┴──┴──┐
+    │   vPC Leaf Pair          │
+    │  ┌────────┐ ┌────────┐  │
+    │  │ Leaf 1 │ │ Leaf 2 │  │
+    │  │(Primary)│ │(Second)│  │
+    │  └──┬──┬──┘ └──┬──┬──┘  │
+    │     │  └──vPC──┘  │     │
+    │     │             │     │
+    └─────┼─────────────┼─────┘
+          │             │
+       ┌──┴──┐       ┌──┴──┐
+       │ ESXi│       │ ESXi│   Servers dual-homed via LACP
+       └─────┘       └─────┘
+```
+
+- Servers dual-homed with LACP across two leaf switches
+- Active-active forwarding (no STP blocking)
+- vPC + VXLAN EVPN is the standard modern DC design
+
+**2. Data Center Aggregation Layer**
+
+vPC on Nexus 9500 for aggregation:
+- Connect legacy L2 switches to VXLAN fabric
+- Bridge between old and new during migration
+- FCoE environments requiring active-active SAN paths
+
+**3. Network Services Integration**
+
+vPC to connect firewalls, load balancers, and other appliances:
+
+```
+    ┌────────┐  vPC  ┌────────┐
+    │ Leaf 1 │◄════►│ Leaf 2 │
+    └──┬─────┘      └─────┬──┘
+       │    vPC Member     │
+       └──────┬────────────┘
+              │
+         ┌────┴────┐
+         │Firewall │   (Dual-homed via LACP to vPC pair)
+         │  HA     │
+         └─────────┘
+```
+
+**4. Storage Network (FCoE)**
+
+vPC for Fibre Channel over Ethernet environments:
+- Active-active SAN paths
+- No STP blocking on storage traffic
+- Nexus 5000/7000/9000 with FCoE support
+
+## 16.5 Pros and Cons
+
+### Stacking: Pros and Cons
+
+| Pros | Cons |
+|------|------|
+| **Single management** — One IP, one config, one CLI | **Shared failure domain** — Control plane bug crashes entire stack |
+| **Simplified STP** — One STP instance, one root bridge | **Stack bandwidth limitation** — Stack ring can bottleneck |
+| **Easy scaling** — Add switch, it joins the stack automatically | **Proprietary cables** — Stack cables are vendor-specific |
+| **Single routing instance** — One OSPF/BGP process, one RIB | **Software upgrades** — Typically requires all members on same version |
+| **No consistency checks** — One config means no mismatch issues | **Physical proximity** — Stack cables limit distance (typically ~3m) |
+| **Lower cost** — No need for peer-link bandwidth | **Member failure cascading** — Stack master failure causes reconvergence for all members |
+| **Port channel across members** — MEC spans all members transparently | **Limited to campus platforms** — Not available on DC-grade Nexus switches |
+
+### vPC: Pros and Cons
+
+| Pros | Cons |
+|------|------|
+| **Independent failure domains** — One switch crash doesn't affect the other | **Configuration complexity** — Two configs must be kept in sync manually |
+| **Independent upgrades** — ISSU one switch while other serves traffic | **Consistency checks** — Type 1 mismatches will suspend vPC ports |
+| **No distance limitation** — Peer-link can be as long as any fiber run | **Peer-link overhead** — Requires dedicated high-bandwidth links |
+| **Dual management** — If one switch's mgmt fails, the other is independent | **Only 2 switches** — Cannot extend vPC to 3+ switches |
+| **Independent routing** — Each switch runs own routing, own RIB | **Orphan port complexity** — Single-attached devices need special handling |
+| **Data center grade** — Built for high-density, high-throughput environments | **Split-brain risk** — If both keepalive and peer-link fail |
+| **Works with VXLAN** — Native integration with EVPN overlay | **Not transparent** — Downstream devices must support LACP |
+
+## 16.6 Limitations
+
+### Stacking Limitations
+
+1. **Maximum stack size:** 2-9 members (varies by platform) — cannot build large-scale fabrics with stacking alone
+2. **Stack bandwidth:** Even StackWise-480 (480 Gbps) can bottleneck under heavy east-west traffic across members
+3. **Distance:** Traditional stack cables limited to ~3 meters (StackWise Virtual allows longer via standard links)
+4. **Single software version:** All members must run the same NX-OS/IOS-XE version
+5. **Blast radius:** A software bug or crash on the active member takes down the entire stack
+6. **No multi-tenancy:** No VRF-heavy designs or VXLAN overlay (campus-focused)
+7. **Stack renumbering:** Adding/removing members can cause member number changes and port ID shifts
+8. **Priority election:** Stack master election can be unpredictable if priorities aren't set correctly
+9. **Not for spine-leaf:** Stacking is for access/distribution layers, not suitable for modern DC spine-leaf architectures
+
+### vPC Limitations
+
+1. **Only 2 peers:** vPC domain is always exactly 2 switches — no 3-way vPC
+2. **Configuration sync:** No automatic config sync (operator must ensure matching configs on both peers)
+3. **Peer-link bandwidth:** Peer-link must be large enough for orphan port traffic and CFS messages
+4. **L3 over vPC:** Some limitations with L3 routing over vPC peer-link (e.g., routing adjacency on VLAN carried over peer-link)
+5. **Orphan port traffic:** If peer-link fails, orphan ports on secondary become unreachable
+6. **vPC+ (ACI):** vPC in ACI mode has additional restrictions compared to NX-OS mode
+7. **Supported features:** Some NX-OS features are not supported with vPC (check release notes for compatibility matrix)
+8. **No dynamic negotiation:** vPC domain ID, role priority, and keepalive must be manually configured and matched
+9. **Peer-link is mandatory:** Even if no traffic needs to cross between peers, the peer-link must exist for control messages
+
+## 16.7 Which Devices Use Stacking? Which Use vPC?
+
+### Stacking Devices
+
+| Platform | Stacking Technology | Typical Role |
+|----------|-------------------|-------------|
+| **Catalyst 9200** | StackWise-480 (up to 8) | Campus access (SMB/branch) |
+| **Catalyst 9300** | StackWise-480/1T (up to 8) | Campus access (enterprise) |
+| **Catalyst 9400** | StackWise Virtual (2 only) | Campus distribution/core (modular) |
+| **Catalyst 9500** | StackWise Virtual (2 only) | Campus distribution/core (fixed) |
+| **Catalyst 9600** | StackWise Virtual (2 only) | Campus core (modular, high perf) |
+| **Catalyst 3850** (EOL) | StackWise-160 (up to 9) | Campus access (legacy) |
+| **Catalyst 3650** (EOL) | StackWise-160 (up to 9) | Campus access (legacy) |
+| **Catalyst 2960-X** (EOL) | FlexStack (up to 8) | Campus access (legacy, L2) |
+
+### vPC Devices
+
+| Platform | vPC Support | Typical Role |
+|----------|------------|-------------|
+| **Nexus 9300** (all ASICs) | Yes (primary use) | Data center leaf |
+| **Nexus 9500** | Yes | Data center spine/aggregation |
+| **Nexus 9400** | Yes | Data center aggregation |
+| **Nexus 7000/7700** (EOL) | Yes | Legacy data center core |
+| **Nexus 5000/5500/5600** (EOL) | Yes | Legacy access/aggregation |
+| **Nexus 3000** | Yes (some models) | Low-latency ToR |
+
+### Quick Decision Matrix
+
+```
+    "Should I use Stacking or vPC?"
+
+    ┌──────────────────────────┐
+    │ Is it a DATA CENTER?     │
+    │ (Nexus, high density,    │
+    │  10G-400G, VXLAN/EVPN)   │
+    └──────────┬───────────────┘
+               │
+          ┌────┴────┐
+          │  YES    │ ──────► Use vPC (Nexus switches)
+          └─────────┘
+
+          ┌─────────┐
+          │   NO    │
+          └────┬────┘
+               │
+    ┌──────────┴──────────────┐
+    │ Is it a CAMPUS network?  │
+    │ (Catalyst, 1G/10G/25G,   │
+    │  PoE, access/distrib)    │
+    └──────────┬───────────────┘
+               │
+          ┌────┴────┐
+          │  YES    │ ──────► Use Stacking (Catalyst switches)
+          └─────────┘
+               │
+          ┌────┴────┐
+          │ BOTH?   │ ──────► Campus: Stacking
+          └─────────┘         Data Center: vPC
+                              They can coexist in the same network!
+```
+
+### How They Coexist (Real-World Architecture)
+
+In a typical enterprise, both technologies are used simultaneously in different parts of the network:
+
+```
+    ┌─────────────────────────────────────────────────────────────────┐
+    │                    ENTERPRISE NETWORK                           │
+    │                                                                 │
+    │   DATA CENTER                    │    CAMPUS                    │
+    │   (vPC on Nexus)                 │    (Stacking on Catalyst)   │
+    │                                  │                              │
+    │   ┌────────┐    ┌────────┐      │    ┌─────────────────────┐  │
+    │   │Spine 1 │    │Spine 2 │      │    │  Distribution       │  │
+    │   └──┬──┬──┘    └──┬──┬──┘      │    │  Cat 9500 SVL Pair  │  │
+    │      │  │          │  │         │    └──────┬──────────────┘  │
+    │   ┌──┴──┴──────────┴──┴──┐      │           │                 │
+    │   │     vPC Leaf Pairs    │      │    ┌──────┴──────────────┐  │
+    │   │  ┌──────┐ ┌──────┐  │      │    │  Access Stack       │  │
+    │   │  │Leaf 1│ │Leaf 2│  │      │    │  Cat 9300 x 4       │  │
+    │   │  │(vPC) │ │(vPC) │  │      │    │  192 ports, 1 IP    │  │
+    │   │  └──────┘ └──────┘  │      │    │  PoE for phones/APs │  │
+    │   │                      │      │    └─────────────────────┘  │
+    │   └──────────────────────┘      │                              │
+    │      │                           │         │                    │
+    │   Servers, VMs, Storage          │    Phones, PCs, APs, IoT    │
+    │   (10G-100G, VXLAN/EVPN)        │    (1G PoE, SD-Access)      │
+    └─────────────────────────────────┴──────────────────────────────┘
+```
+
+---
+
 # APPENDIX A: GLOSSARY
 
 | Term | Definition |
@@ -2017,6 +3020,21 @@ show vpc orphan-ports                   ! Orphan port status
 | **NDI** | Nexus Dashboard Insights — analytics and assurance |
 | **POAP** | Power-On Auto Provisioning — zero-touch deployment |
 | **Clos** | Multi-stage non-blocking switching architecture |
+| **DAD** | Dual-Active Detection — prevents split-brain in multi-chassis systems |
+| **SVL** | StackWise Virtual Link — interconnect between two Catalyst chassis forming one logical switch |
+| **MEC** | Multi-chassis EtherChannel — port channel spanning stack members |
+| **ePAgP** | Enhanced PAgP — DAD method using downstream switches as witnesses |
+| **VSS** | Virtual Switching System — legacy Catalyst 6500 chassis virtualization (EOL) |
+| **VPLS** | Virtual Private LAN Service — legacy L2VPN replaced by EVPN |
+| **VPWS** | Virtual Private Wire Service — point-to-point L2VPN (EVPN E-LINE) |
+| **E-LAN** | Ethernet Virtual Private LAN — multipoint-to-multipoint EVPN service |
+| **E-LINE** | Ethernet Virtual Private Line — point-to-point EVPN service |
+| **E-TREE** | Ethernet Virtual Private Tree — hub-and-spoke EVPN service |
+| **SR** | Segment Routing — modern MPLS alternative using SIDs for path programming |
+| **SRv6** | Segment Routing over IPv6 — SR using IPv6 encapsulation instead of MPLS labels |
+| **PBB** | Provider Backbone Bridging — IEEE 802.1ah MAC-in-MAC encapsulation |
+| **DCI** | Data Center Interconnect — extending L2/L3 between data centers |
+| **MEF** | Metro Ethernet Forum — standards body defining Ethernet services |
 
 ---
 
@@ -2025,10 +3043,11 @@ show vpc orphan-ports                   ! Orphan port status
 | Day | Focus | Topics |
 |-----|-------|--------|
 | **Day 1** | Platform + Architecture | Nexus families, 9000 sub-series, Cloud Scale ASIC, NX-OS vs IOS |
-| **Day 2** | L2 Technologies | vPC deep dive (all failure scenarios), STP on NX-OS, port channels |
+| **Day 2** | L2 Technologies | vPC deep dive (all failure scenarios), DAD, STP on NX-OS, port channels |
 | **Day 3** | L3 Technologies + VXLAN Basics | OSPF/BGP on NX-OS, VRF, VXLAN fundamentals, packet format |
-| **Day 4** | EVPN Deep Dive | All 5 route types, anycast gateway, L2/L3 VNI, IRB, ARP suppression |
-| **Day 5** | Design + Operations | Clos architecture, NDFC, configuration examples, troubleshooting commands |
+| **Day 4** | EVPN Deep Dive | All 5 route types, EVPN types (VXLAN/MPLS/SR), anycast gateway, L2/L3 VNI, IRB, ARP suppression |
+| **Day 5** | Design + Operations | Clos architecture, NDFC, Stacking vs vPC, configuration examples, troubleshooting commands |
+| **Day 6** | Advanced Topics + Review | EVPN real-world use cases (DCI, 5G, multi-tenant), Stacking vs vPC deep dive, DAD scenarios, interview Q&A practice |
 
 ---
 
