@@ -11,6 +11,25 @@ This document follows semantic versioning: **MAJOR.MINOR.PATCH**
 
 ---
 
+### v2.3.0 (2026-02-18) - Vibrant Diagram Color Standardization
+
+**Diagram Color Updates:**
+- All 9 inline SVG diagrams updated from washed-out pastels to vibrant saturated gradients
+- All 9 gallery SVG diagrams updated to match
+- 4 gradient pairs standardized across all 8 older diagrams:
+  - Blue: `#a0c4ff→#74b9ff` (pastel) → `#74b9ff→#0984e3` (vibrant)
+  - Green: `#a8e6cf→#55efc4` (pastel) → `#55efc4→#00b894` (vibrant)
+  - Red: `#ff7675→#fab1a0` (pastel) → `#ff7675→#d63031` (vibrant)
+  - Purple: `#d5aaff→#a29bfe` (pastel) → `#a29bfe→#6c5ce7` (vibrant)
+- All diagrams now match the Private VLAN diagram's vibrant gradient style
+
+**Documentation Updates:**
+- Diagram Style Guide added to continue.md with mandatory color palette
+- Gradient naming conventions and rules documented for all future diagrams
+- Standard gradient palette table with 9 colors and usage guidelines
+
+---
+
 ### v2.2.0 (2026-02-18) - HTML Dashboard Sync & Version Archive
 
 **HTML Dashboard Updates:**
