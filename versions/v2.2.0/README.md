@@ -49,8 +49,7 @@ Cisco Nexsus Learning/
     ├── v1.3.0/
     ├── v1.3.1/
     ├── v2.0.0/
-    ├── v2.1.0/
-    └── v2.2.0/
+    └── v2.1.0/
 ```
 
 ## Guide Contents (16 Parts)
@@ -73,14 +72,6 @@ Cisco Nexsus Learning/
 | 14 | Interview Tips & Common Questions | Interview |
 | **15** | **EVPN Comprehensive Guide (Types, Use Cases, Real-World)** | **EVPN** |
 | **16** | **Stacking vs VPC — Complete Comparison** | **Comparison** |
-
-## What's New in v2.3.0
-
-### Vibrant Diagram Color Standardization
-- **All 18 SVG diagrams** (9 inline + 9 gallery) updated to use vibrant saturated gradients
-- Replaced washed-out pastel colors with the same rich color scheme used in the PVLAN diagram
-- Standardized palette: vibrant blue, green, purple, red, yellow/gold, gray, teal, orange
-- **Diagram Style Guide** added to `continue.md` — mandatory color palette and rules for all future diagrams
 
 ## What's New in v2.2.0
 
@@ -188,6 +179,6 @@ This guide was compiled from Cisco official documentation, data sheets, and conf
 ---
 
 *Author: Asad Yaseen (asad4ntrp2@gmail.com)*
-*Version: 2.3.0*
+*Version: 2.2.0*
 *Created: February 14, 2026*
 *Updated: February 18, 2026*
