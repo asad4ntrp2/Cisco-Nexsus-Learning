@@ -14,7 +14,7 @@ A comprehensive study guide for the Cisco Nexus product family, designed for net
 Open **`index.html`** in any browser for the interactive learning experience with:
 - Collapsible section-wise navigation with fixed sidebar
 - Syntax-highlighted NX-OS configurations with copy button
-- 9 inline SVG architecture diagrams with vibrant gradient styling
+- 8 inline SVG architecture diagrams with vibrant gradient styling
 - Full-page **Architecture Diagrams Gallery** with lightbox viewer and SVG download
 - Professional branding badges on all diagrams (gradient panels, author info, GitHub link)
 - Search functionality (Ctrl+K) and scroll progress tracking
@@ -29,27 +29,19 @@ Cisco Nexsus Learning/
 ├── README.md                                    ← You are here
 ├── VERSION.md                                   ← Document version history
 ├── continue.md                                  ← Study progress tracker
-├── index.html                                   ← Interactive HTML learning page (all 16 parts + 9 diagrams)
+├── index.html                                   ← Interactive HTML learning page
 ├── docs/
 │   └── Cisco_Nexus_Interview_Guide.md           ← Main study guide (all 16 parts)
-├── diagrams/
-│   ├── 01_Nexus_Family_Overview.drawio
-│   ├── 02_Leaf_Spine_Clos_Architecture.drawio
-│   ├── 03_VXLAN_Packet_Format.drawio
-│   ├── 04_vPC_Architecture.drawio
-│   ├── 05_EVPN_Route_Types.drawio
-│   ├── 06_Anycast_Gateway.drawio
-│   ├── 07_L2VNI_vs_L3VNI_Traffic_Flow.drawio
-│   ├── 08_NDFC_Day0_Day1_Day2.drawio
-│   └── 09_Private_VLAN_Architecture.drawio
-└── versions/                                    ← Version archive (snapshots per release)
-    ├── README.md
-    ├── v1.1.0/
-    ├── v1.2.0/
-    ├── v1.3.0/
-    ├── v1.3.1/
-    ├── v2.0.0/
-    └── v2.1.0/
+└── diagrams/
+    ├── 01_Nexus_Family_Overview.drawio
+    ├── 02_Leaf_Spine_Clos_Architecture.drawio
+    ├── 03_VXLAN_Packet_Format.drawio
+    ├── 04_vPC_Architecture.drawio
+    ├── 05_EVPN_Route_Types.drawio
+    ├── 06_Anycast_Gateway.drawio
+    ├── 07_L2VNI_vs_L3VNI_Traffic_Flow.drawio
+    ├── 08_NDFC_Day0_Day1_Day2.drawio
+    └── 09_Private_VLAN_Architecture.drawio
 ```
 
 ## Guide Contents (16 Parts)
@@ -72,22 +64,6 @@ Cisco Nexsus Learning/
 | 14 | Interview Tips & Common Questions | Interview |
 | **15** | **EVPN Comprehensive Guide (Types, Use Cases, Real-World)** | **EVPN** |
 | **16** | **Stacking vs VPC — Complete Comparison** | **Comparison** |
-
-## What's New in v2.2.0
-
-### HTML Dashboard Sync & Version Archive
-- **index.html fully synced** with all v2.0.0 and v2.1.0 content:
-  - Section 3.7: Dual-Active Detection (DAD) with detection methods table, ASCII diagrams, NX-OS config
-  - Section 3.8: Private VLANs (PVLANs) with vibrant gradient SVG diagram, config examples, VXLAN integration
-  - Part 15: EVPN Comprehensive Guide with 4 types, 6 use cases, service types
-  - Part 16: Stacking vs VPC with comparison tables, decision matrix, coexistence diagram
-- **9th diagram added**: Private VLAN Architecture with vibrant gradient styling (purple, green, blue, red, gold)
-- **Diagrams Gallery** updated to 9 diagrams with lightbox support
-- **Sidebar navigation** updated with Parts 15-16 and "Advanced Topics" group
-- **6-Day Study Plan** reflected in HTML (was 5-day)
-- **Glossary** expanded with 17 new terms (DAD, SVL, PVLAN, VPLS, E-LAN, SR, etc.)
-- **Self-check** updated with Parts 15-16 checkboxes
-- **Version archive** created: `versions/` directory with per-release snapshots (v1.1.0 through v2.1.0)
 
 ## What's New in v2.1.0
 
@@ -179,6 +155,6 @@ This guide was compiled from Cisco official documentation, data sheets, and conf
 ---
 
 *Author: Asad Yaseen (asad4ntrp2@gmail.com)*
-*Version: 2.2.0*
+*Version: 2.1.0*
 *Created: February 14, 2026*
 *Updated: February 18, 2026*

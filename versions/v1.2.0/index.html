@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco Nexus Learning Guide - Interview Preparation</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-code: #1c2128;
+  --bg-hover: #1f2937;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-dim: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --accent3: #d2a8ff;
+  --accent4: #f0883e;
+  --accent5: #f778ba;
+  --red: #f85149;
+  --sidebar-w: 280px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform .3s;
+  padding-bottom: 40px;
+}
+.sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top:0;
+  background: var(--bg-card);
+  z-index: 2;
+}
+.sidebar-header h2 { font-size: 15px; color: var(--accent); margin-bottom:2px; }
+.sidebar-header p { font-size: 11px; color: var(--text-dim); }
+.nav-group { padding: 8px 0; }
+.nav-group-title {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--text-dim); padding: 8px 16px 4px; font-weight: 600;
+}
+.nav-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px; color: var(--text-dim); text-decoration: none;
+  font-size: 13px; border-left: 2px solid transparent; transition: all .2s;
+}
+.nav-link:hover { background: var(--bg-hover); color: var(--text); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,.08); }
+.nav-link .nav-num {
+  font-size: 10px; font-weight: 700; min-width: 20px;
+  height: 20px; border-radius: 4px; display: flex;
+  align-items: center; justify-content: center;
+  background: var(--bg); border: 1px solid var(--border);
+}
+.progress-bar-container {
+  padding: 12px 16px; border-top: 1px solid var(--border);
+  position: sticky; bottom: 0; background: var(--bg-card);
+}
+.progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0%; background: var(--accent2); border-radius: 2px; transition: width .3s; }
+.progress-text { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+/* MAIN */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(13,17,23,.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-title { font-size: 14px; font-weight: 600; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.btn-toggle-sidebar, .btn-theme {
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text); padding: 6px 12px; border-radius: 6px;
+  cursor: pointer; font-size: 13px; transition: all .2s;
+}
+.btn-toggle-sidebar:hover, .btn-theme:hover { background: var(--bg-hover); }
+.search-box {
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text); padding: 6px 12px; border-radius: 6px;
+  font-size: 13px; width: 220px; outline: none;
+}
+.search-box:focus { border-color: var(--accent); }
+
+/* CONTENT */
+.content { max-width: 960px; margin: 0 auto; padding: 32px; }
+
+/* SECTION */
+.section {
+  margin-bottom: 48px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.section-header {
+  padding: 20px 24px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid transparent;
+  transition: all .2s;
+  user-select: none;
+}
+.section-header:hover { background: var(--bg-hover); }
+.section-header.open { border-bottom-color: var(--border); }
+.section-num {
+  font-size: 13px; font-weight: 700;
+  min-width: 36px; height: 36px;
+  border-radius: 8px; display: flex;
+  align-items: center; justify-content: center;
+  color: #fff; flex-shrink: 0;
+}
+.section-num.blue { background: #1f6feb; }
+.section-num.green { background: #238636; }
+.section-num.purple { background: #8957e5; }
+.section-num.orange { background: #d47616; }
+.section-num.pink { background: #bf4b8a; }
+.section-title { font-size: 18px; font-weight: 600; flex: 1; }
+.section-badge {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .5px;
+  padding: 3px 8px; border-radius: 10px; font-weight: 600;
+  background: rgba(88,166,255,.15); color: var(--accent);
+}
+.section-badge.critical { background: rgba(248,81,73,.15); color: var(--red); }
+.section-badge.important { background: rgba(240,136,62,.15); color: var(--accent4); }
+.section-chevron {
+  font-size: 18px; color: var(--text-dim);
+  transition: transform .3s; flex-shrink: 0;
+}
+.section-header.open .section-chevron { transform: rotate(90deg); }
+.section-body { padding: 24px; display: none; }
+.section-header.open + .section-body { display: block; }
+
+/* TYPOGRAPHY */
+.section-body h2 {
+  font-size: 17px; color: var(--accent); margin: 28px 0 12px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.section-body h2:first-child { margin-top: 0; }
+.section-body h3 { font-size: 15px; color: var(--accent3); margin: 20px 0 8px; }
+.section-body h4 { font-size: 14px; color: var(--accent4); margin: 16px 0 6px; }
+.section-body p { margin-bottom: 12px; }
+.section-body ul, .section-body ol { margin: 8px 0 12px 24px; }
+.section-body li { margin-bottom: 4px; }
+.section-body strong { color: var(--accent); }
+
+/* TABLES */
+.table-wrap { overflow-x: auto; margin: 12px 0 16px; border-radius: 8px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg); color: var(--accent); text-align: left; padding: 10px 14px; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+td { padding: 8px 14px; border-top: 1px solid var(--border); }
+tr:hover td { background: rgba(88,166,255,.04); }
+
+/* CODE */
+pre {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; margin: 12px 0 16px;
+  overflow-x: auto; font-size: 13px; line-height: 1.5;
+  position: relative;
+}
+pre code { color: #e6edf3; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; }
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  background: var(--bg-code); padding: 2px 6px; border-radius: 4px; font-size: 13px;
+}
+pre .comment { color: #8b949e; }
+pre .keyword { color: #ff7b72; }
+pre .string { color: #a5d6ff; }
+pre .command { color: #79c0ff; }
+
+/* CALLOUT */
+.callout {
+  border-radius: 8px; padding: 14px 16px; margin: 12px 0 16px;
+  font-size: 13px; display: flex; gap: 10px;
+  align-items: flex-start;
+}
+.callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.callout.tip { background: rgba(63,185,80,.1); border-left: 3px solid var(--accent2); }
+.callout.warn { background: rgba(240,136,62,.1); border-left: 3px solid var(--accent4); }
+.callout.critical { background: rgba(248,81,73,.1); border-left: 3px solid var(--red); }
+.callout.info { background: rgba(88,166,255,.1); border-left: 3px solid var(--accent); }
+
+/* DIAGRAM ASCII */
+.ascii-diagram {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; margin: 12px 0;
+  overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.4; color: var(--accent);
+  white-space: pre;
+}
+
+/* COMPARISON */
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+.compare-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px;
+}
+.compare-card h4 { margin-top: 0; }
+.compare-card.good { border-color: var(--accent2); }
+.compare-card.bad { border-color: var(--red); }
+
+/* STUDY DAY CARDS */
+.day-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin: 12px 0; }
+.day-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px; text-align: center;
+}
+.day-card .day-num { font-size: 28px; font-weight: 800; color: var(--accent); }
+.day-card .day-label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.day-card .day-topics { font-size: 12px; margin-top: 8px; color: var(--text); }
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .comparison { grid-template-columns: 1fr; }
+  .content { padding: 20px 16px; }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* SEARCH HIGHLIGHT */
+mark { background: rgba(88,166,255,.3); color: var(--text); border-radius: 2px; padding: 0 2px; }
+
+/* COPY BTN */
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text-dim); padding: 4px 8px; border-radius: 4px;
+  cursor: pointer; font-size: 11px; opacity: 0; transition: opacity .2s;
+}
+pre:hover .copy-btn { opacity: 1; }
+.copy-btn:hover { color: var(--text); background: var(--bg-hover); }
+
+/* CHECKED PROGRESS */
+.check-list { list-style: none; margin-left: 0; }
+.check-list li { padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+.check-list input[type="checkbox"] { accent-color: var(--accent2); width: 16px; height: 16px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>Cisco Nexus Guide</h2>
+    <p>Interview Preparation v1.0</p>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Platform &amp; Architecture</div>
+    <a href="#part1" class="nav-link" data-section="part1"><span class="nav-num">01</span>Nexus Product Family</a>
+    <a href="#part2" class="nav-link" data-section="part2"><span class="nav-num">02</span>Architecture Deep Dive</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Layer 2 &amp; Layer 3</div>
+    <a href="#part3" class="nav-link" data-section="part3"><span class="nav-num">03</span>Layer 2 Technologies</a>
+    <a href="#part4" class="nav-link" data-section="part4"><span class="nav-num">04</span>Layer 3 Technologies</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Platform Comparison</div>
+    <a href="#part5" class="nav-link" data-section="part5"><span class="nav-num">05</span>NX-OS vs IOS</a>
+    <a href="#part6" class="nav-link" data-section="part6"><span class="nav-num">06</span>Nexus vs Catalyst</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">VXLAN &amp; EVPN</div>
+    <a href="#part7" class="nav-link" data-section="part7"><span class="nav-num">07</span>VXLAN Fundamentals</a>
+    <a href="#part8" class="nav-link" data-section="part8"><span class="nav-num">08</span>BGP EVPN Deep Dive</a>
+    <a href="#part9" class="nav-link" data-section="part9"><span class="nav-num">09</span>Fabric Operations</a>
+    <a href="#part10" class="nav-link" data-section="part10"><span class="nav-num">10</span>Config Examples</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Operations &amp; Design</div>
+    <a href="#part11" class="nav-link" data-section="part11"><span class="nav-num">11</span>Nexus Dashboard &amp; NDFC</a>
+    <a href="#part12" class="nav-link" data-section="part12"><span class="nav-num">12</span>VXLAN vs Legacy</a>
+    <a href="#part13" class="nav-link" data-section="part13"><span class="nav-num">13</span>Clos Fabric Architecture</a>
+    <a href="#part14" class="nav-link" data-section="part14"><span class="nav-num">14</span>Interview Tips</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">Reference</div>
+    <a href="#glossary" class="nav-link" data-section="glossary"><span class="nav-num">A</span>Glossary</a>
+    <a href="#studyplan" class="nav-link" data-section="studyplan"><span class="nav-num">B</span>5-Day Study Plan</a>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText">0% read</div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-toggle-sidebar" onclick="toggleSidebar()">&#9776;</button>
+      <span class="topbar-title">Cisco Nexus - Student Learning Guide</span>
+    </div>
+    <div class="topbar-actions">
+      <input type="text" class="search-box" id="searchBox" placeholder="Search topics... (Ctrl+K)" />
+      <button class="btn-theme" onclick="expandAll()">Expand All</button>
+      <button class="btn-theme" onclick="collapseAll()">Collapse All</button>
+    </div>
+  </div>
+
+  <div class="content" id="content">
+
+    <!-- ==================== LANDING / HERO SECTION ==================== -->
+    <div id="landing" style="background: linear-gradient(135deg, #161b22 0%, #1a1f2e 50%, #161b22 100%); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem 2rem; margin-bottom: 1.5rem;">
+
+      <!-- Title & Author -->
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; color: #58a6ff; margin-bottom: 0.3rem; letter-spacing: -0.5px;">Cisco Nexus Product Family</h1>
+        <h2 style="font-size: 1.2rem; color: #e6edf3; font-weight: 400; margin-bottom: 1.2rem;">Student Learning &amp; Interview Preparation Guide</h2>
+        <div style="display: inline-flex; align-items: center; gap: 10px; background: #1c2128; padding: 10px 20px; border-radius: 8px; border: 1px solid #30363d;">
+          <span style="font-size: 1.6rem;">&#128100;</span>
+          <div style="text-align: left;">
+            <div style="color: #e6edf3; font-weight: 600; font-size: 1rem;">Asad Yaseen</div>
+            <div style="color: #8b949e; font-size: 0.85rem;">asad4ntrp2@gmail.com</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Cards Row -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1rem; text-align: center;">
+          <div style="font-size: 1.8rem; color: #58a6ff; font-weight: 700;">14</div>
+          <div style="color: #8b949e; font-size: 0.85rem;">Study Sections</div>
+        </div>
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1rem; text-align: center;">
+          <div style="font-size: 1.8rem; color: #3fb950; font-weight: 700;">8</div>
+          <div style="color: #8b949e; font-size: 0.85rem;">Architecture Diagrams</div>
+        </div>
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1rem; text-align: center;">
+          <div style="font-size: 1.8rem; color: #d2a8ff; font-weight: 700;">5</div>
+          <div style="color: #8b949e; font-size: 0.85rem;">Day Study Plan</div>
+        </div>
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1rem; text-align: center;">
+          <div style="font-size: 1.8rem; color: #f0883e; font-weight: 700;">50+</div>
+          <div style="color: #8b949e; font-size: 0.85rem;">NX-OS Config Examples</div>
+        </div>
+      </div>
+
+      <!-- About This Guide -->
+      <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem;">
+        <h3 style="color: #58a6ff; font-size: 1rem; margin-bottom: 0.6rem;">About This Guide</h3>
+        <p style="color: #c9d1d9; font-size: 0.9rem; line-height: 1.7; margin: 0;">
+          A comprehensive study resource for network engineers preparing for <strong style="color:#e6edf3;">senior-level data center interviews</strong>.
+          Covers the entire Cisco Nexus ecosystem &mdash; from platform hardware and Cloud Scale ASICs through vPC deep dives,
+          VXLAN/EVPN fabric architecture with all 5 route types, complete NX-OS configuration examples,
+          Nexus Dashboard (NDFC) operations, and Clos fabric design principles. Each section includes
+          architecture diagrams, comparison tables, and real-world configuration blocks.
+        </p>
+      </div>
+
+      <!-- Two-column: Key Topics & Study Plan -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1.2rem 1.5rem;">
+          <h3 style="color: #3fb950; font-size: 1rem; margin-bottom: 0.6rem;">Key Interview Topics</h3>
+          <ul style="color: #c9d1d9; font-size: 0.85rem; line-height: 1.8; padding-left: 1.2rem; margin: 0;">
+            <li>Cloud Scale ASIC &mdash; Slice architecture, forwarding pipeline</li>
+            <li>vPC &mdash; All failure scenarios, split-brain, consistency checks</li>
+            <li>VXLAN/EVPN &mdash; All 5 route types, VNI mapping, packet format</li>
+            <li>Anycast Gateway &mdash; Replacing HSRP/VRRP in fabrics</li>
+            <li>Clos Fabric &mdash; Leaf-spine design, ECMP, 2-hop latency</li>
+            <li>NX-OS vs IOS &mdash; Feature activation, route-map differences</li>
+          </ul>
+        </div>
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1.2rem 1.5rem;">
+          <h3 style="color: #d2a8ff; font-size: 1rem; margin-bottom: 0.6rem;">5-Day Study Plan</h3>
+          <table style="width: 100%; font-size: 0.82rem; color: #c9d1d9; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 4px 6px; font-weight: 600; color: #58a6ff;">Day 1</td>
+              <td style="padding: 4px 6px;">Platform + Architecture (Parts 1, 2, 5, 6)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 4px 6px; font-weight: 600; color: #58a6ff;">Day 2</td>
+              <td style="padding: 4px 6px;">L2 Technologies &mdash; vPC Deep Dive (Part 3)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 4px 6px; font-weight: 600; color: #58a6ff;">Day 3</td>
+              <td style="padding: 4px 6px;">L3 + VXLAN Basics (Parts 4, 7)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 4px 6px; font-weight: 600; color: #58a6ff;">Day 4</td>
+              <td style="padding: 4px 6px;">EVPN Deep Dive (Parts 8, 9)</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 6px; font-weight: 600; color: #58a6ff;">Day 5</td>
+              <td style="padding: 4px 6px;">Design + Operations (Parts 10-14)</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- References & Version Info -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1.2rem 1.5rem;">
+          <h3 style="color: #f0883e; font-size: 1rem; margin-bottom: 0.6rem;">References &amp; Sources</h3>
+          <ul style="color: #c9d1d9; font-size: 0.85rem; line-height: 1.8; padding-left: 1.2rem; margin: 0;">
+            <li>Cisco Nexus 9000 Series NX-OS Configuration Guides</li>
+            <li>Cisco VXLAN EVPN Design &amp; Deployment Guides</li>
+            <li>Cisco Nexus Dashboard Fabric Controller Documentation</li>
+            <li>Cisco Data Center Networking Official Data Sheets</li>
+            <li>RFC 7348 (VXLAN), RFC 7432 &amp; RFC 8365 (EVPN)</li>
+          </ul>
+          <p style="color: #8b949e; font-size: 0.78rem; margin-top: 0.5rem;">All material compiled from publicly available Cisco documentation at <span style="color:#58a6ff;">cisco.com</span></p>
+        </div>
+        <div style="background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 1.2rem 1.5rem;">
+          <h3 style="color: #f778ba; font-size: 1rem; margin-bottom: 0.6rem;">Version &amp; History</h3>
+          <table style="width: 100%; font-size: 0.82rem; color: #c9d1d9; border-collapse: collapse;">
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 4px 6px; font-weight: 600; color: #3fb950;">v1.2.0</td>
+              <td style="padding: 4px 6px;">Feb 14, 2026</td>
+              <td style="padding: 4px 6px;">Embedded interactive diagrams in HTML</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 4px 6px; font-weight: 600; color: #58a6ff;">v1.1.0</td>
+              <td style="padding: 4px 6px;">Feb 14, 2026</td>
+              <td style="padding: 4px 6px;">Interactive HTML page + GitHub release</td>
+            </tr>
+            <tr>
+              <td style="padding: 4px 6px; font-weight: 600; color: #8b949e;">v1.0.0</td>
+              <td style="padding: 4px 6px;">Feb 14, 2026</td>
+              <td style="padding: 4px 6px;">Initial 14-part guide + 8 Draw.io diagrams</td>
+            </tr>
+          </table>
+          <p style="color: #8b949e; font-size: 0.78rem; margin-top: 0.8rem;">Current Version: <strong style="color: #3fb950;">1.2.0</strong> &nbsp;|&nbsp; Created: February 2026 &nbsp;|&nbsp; License: Educational Use</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== PART 1 ==================== -->
+    <div class="section" id="part1">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num blue">01</span>
+        <span class="section-title">Nexus Product Family Overview</span>
+        <span class="section-badge">Foundation</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: Nexus Family Overview</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="25 5 1550 515" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<text x="800" y="48" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Cisco Nexus Product Family Overview</text>
+<rect x="40" y="80" width="1520" height="200" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="60" y="98" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#000000">NEXUS 9000 SERIES (Flagship - Data Center)</text>
+<text x="60" y="114" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="normal" fill="#000000">NX-OS Mode or ACI Mode | Cloud Scale ASIC</text>
+<rect x="60" y="130" width="200" height="130" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="160" y="168" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">9200</text>
+<text x="160" y="184" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Fixed 1RU</text>
+<text x="160" y="198" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Leaf / Aggregation</text>
+<text x="160" y="214" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">7.2 Tbps</text>
+<text x="160" y="228" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">1/10/25/40/50/100G</text>
+<rect x="280" y="130" width="250" height="130" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="405" y="161" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">9300 (Most Popular)</text>
+<text x="405" y="176" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Fixed 1RU</text>
+<text x="405" y="191" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Leaf Switch</text>
+<text x="405" y="206" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">3.6 Tbps</text>
+<text x="405" y="221" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">EX→FX→FX2→FX3→GX→GX2</text>
+<text x="405" y="236" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">48x 10/25G + 6x 100G</text>
+<rect x="550" y="130" width="220" height="130" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="660" y="161" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">9400</text>
+<text x="660" y="176" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Modular 4RU</text>
+<text x="660" y="191" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Aggregation / Spine</text>
+<text x="660" y="206" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">25.6 Tbps</text>
+<text x="660" y="221" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">8 Expansion Slots</text>
+<text x="660" y="236" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">64x 400G, MACsec, PTP</text>
+<rect x="790" y="130" width="220" height="130" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="900" y="161" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">9500</text>
+<text x="900" y="176" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Modular 4/8/16 Slot</text>
+<text x="900" y="191" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Spine / Core</text>
+<text x="900" y="206" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Internal Clos Fabric</text>
+<text x="900" y="221" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">16 Line Cards + 6 FMs</text>
+<text x="900" y="236" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">1-400G Line Cards</text>
+<rect x="1030" y="130" width="200" height="130" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="1130" y="168" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">9800</text>
+<text x="1130" y="184" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Ultra-High Density</text>
+<text x="1130" y="198" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">400/800G Ready</text>
+<text x="1130" y="214" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">AI/ML Workloads</text>
+<text x="1130" y="228" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Latest Generation</text>
+<rect x="40" y="310" width="300" height="120" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="190" y="344" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NEXUS 7000/7700</text>
+<text x="190" y="358" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Legacy Modular Core</text>
+<text x="190" y="374" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VDC, OTV, FabricPath</text>
+<text x="190" y="388" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Supervisor + I/O Modules</text>
+<text x="190" y="404" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">End-of-Sale</text>
+<rect x="370" y="310" width="300" height="120" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="520" y="344" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NEXUS 5000/5500/5600</text>
+<text x="520" y="358" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Legacy Access/Aggregation</text>
+<text x="520" y="374" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Unified Fabric (LAN+SAN)</text>
+<text x="520" y="388" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">FCoE, FabricPath</text>
+<text x="520" y="404" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">End-of-Sale</text>
+<rect x="700" y="310" width="300" height="120" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="850" y="344" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NEXUS 3000/3500</text>
+<text x="850" y="358" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Low-Latency ToR</text>
+<text x="850" y="374" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">HPC, Financial Trading</text>
+<text x="850" y="388" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Sub-microsecond latency</text>
+<text x="850" y="404" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Same NX-OS as 9000</text>
+<rect x="1030" y="310" width="300" height="120" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="1180" y="344" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NEXUS 2000 (FEX)</text>
+<text x="1180" y="358" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Fabric Extender</text>
+<text x="1180" y="374" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Remote Line Card</text>
+<text x="1180" y="388" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Managed by Parent N5K/7K/9K</text>
+<text x="1180" y="404" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Declining in new designs</text>
+<text x="50" y="474" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Legend</text>
+<rect x="40" y="485" width="20" height="20" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="498" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Current / Recommended</text>
+<rect x="230" y="485" width="20" height="20" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="265" y="498" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Legacy / End-of-Sale</text>
+<rect x="420" y="485" width="20" height="20" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="455" y="498" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Specialized</text>
+</svg>
+          </div>
+        </div>
+        <h2>The Nexus Family at a Glance</h2>
+        <p>The Cisco Nexus family is purpose-built for <strong>data center</strong> environments. Unlike Catalyst switches (campus/enterprise), Nexus switches run <strong>NX-OS</strong> and are optimized for high-density 10/25/40/100/200/400 GbE, low-latency forwarding, VXLAN/EVPN overlay fabrics, ACI mode, and programmability (NX-API, OpenConfig, gRPC).</p>
+
+        <h2>Nexus 9000 Series (Flagship)</h2>
+        <p>The Nexus 9000 is the <strong>primary</strong> platform today. It operates in two modes:</p>
+        <ul>
+          <li><strong>NX-OS Standalone Mode</strong> &mdash; Traditional CLI-based operation with VXLAN/EVPN</li>
+          <li><strong>ACI Mode</strong> &mdash; Policy-driven SDN fabric controlled by APIC</li>
+        </ul>
+
+        <div class="table-wrap">
+          <table>
+            <tr><th>Sub-Series</th><th>Form Factor</th><th>Role</th><th>Key Specs</th></tr>
+            <tr><td><strong>9200</strong></td><td>Fixed 1RU</td><td>Leaf / Aggregation</td><td>Up to 7.2 Tbps, 1/10/25/40/50/100G</td></tr>
+            <tr><td><strong>9300</strong></td><td>Fixed 1RU/2RU</td><td>Leaf (most popular)</td><td>Up to 3.6 Tbps, Cloud Scale ASIC</td></tr>
+            <tr><td><strong>9400</strong></td><td>Modular 4RU</td><td>Aggregation / Spine</td><td>Up to 25.6 Tbps, 64x 400G, MACsec</td></tr>
+            <tr><td><strong>9500</strong></td><td>Modular 4/8/16 slot</td><td>Spine / Core</td><td>Up to 16 line cards, 6 fabric modules</td></tr>
+            <tr><td><strong>9800</strong></td><td>Fixed</td><td>Ultra-high density</td><td>400/800G, AI/ML workloads</td></tr>
+          </table>
+        </div>
+
+        <h3>ASIC Generations (Critical Interview Knowledge)</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>ASIC Suffix</th><th>Generation</th><th>Key Feature</th></tr>
+            <tr><td><strong>-EX</strong></td><td>1st gen Cloud Scale</td><td>2600 Mpps, VXLAN/EVPN support</td></tr>
+            <tr><td><strong>-FX</strong></td><td>2nd gen</td><td>Added MACsec, improved telemetry</td></tr>
+            <tr><td><strong>-FX2</strong></td><td>3rd gen</td><td>Enhanced buffer, improved ACI</td></tr>
+            <tr><td><strong>-FX3</strong></td><td>4th gen</td><td>Cost-effective cloud-scale</td></tr>
+            <tr><td><strong>-GX</strong></td><td>5th gen</td><td>400G support, deeper buffers</td></tr>
+            <tr><td><strong>-GX2</strong></td><td>6th gen (Latest)</td><td>Highest density, 400G native</td></tr>
+          </table>
+        </div>
+        <div class="callout tip"><span class="callout-icon">&#128161;</span><div><strong>Interview Tip:</strong> The differences between ASIC generations come down to the number of <strong>slices</strong>, <strong>forwarding TCAMs</strong>, and <strong>flex tiles</strong> each ASIC supports.</div></div>
+
+        <h2>Other Nexus Series</h2>
+        <h3>Nexus 7000/7700 (Legacy Modular)</h3>
+        <p>Core / Aggregation with <strong>VDC (Virtual Device Contexts)</strong>. Supports OTV, FabricPath, vPC, MPLS. <span style="color:var(--red);font-weight:600;">End-of-sale announced</span> &mdash; migrate to Nexus 9000.</p>
+
+        <h3>Nexus 5000/5500/5600 (Legacy)</h3>
+        <p>Access / Aggregation with unified fabric (LAN + SAN). Key for <strong>FCoE</strong>. <span style="color:var(--red);font-weight:600;">End-of-sale</span> &mdash; replaced by Nexus 9300.</p>
+
+        <h3>Nexus 3000/3500 (Low-Latency)</h3>
+        <p>Top-of-Rack for HPC, financial trading. Ultra-low latency (~1 microsecond). Use when sub-microsecond latency is critical.</p>
+
+        <h3>Nexus 2000 (Fabric Extenders - FEX)</h3>
+        <p><strong>Not an independent switch</strong> &mdash; managed as a remote line card of a parent Nexus 5k/7k/9k. Declining in new designs, replaced by small leaf switches.</p>
+      </div>
+    </div>
+
+    <!-- ==================== PART 2 ==================== -->
+    <div class="section" id="part2">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num blue">02</span>
+        <span class="section-title">Architecture Deep Dive</span>
+        <span class="section-badge important">Important</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <h2>Cloud Scale ASIC Architecture (Nexus 9000)</h2>
+        <p>This is the heart of modern Nexus switching. You <strong>MUST</strong> understand this for an architectural interview.</p>
+
+        <h3>Slice-Based Architecture</h3>
+        <ul>
+          <li>Each <strong>slice</strong> is a self-contained forwarding complex (SoC)</li>
+          <li>Multiple slices run in parallel for higher throughput</li>
+          <li>Each slice handles ingress AND egress for a subset of ports</li>
+          <li>Slices interconnected via a <strong>slice interconnect</strong> (non-blocking)</li>
+        </ul>
+<div class="ascii-diagram">                ┌─────────────────────────────────┐
+                │        Cloud Scale ASIC          │
+                │                                  │
+                │  ┌────────┐  ┌────────┐         │
+   Ports 1-12 ──┤──│ Slice 0│──│ Slice 1│─────────┤── Ports 13-24
+                │  └───┬────┘  └────┬───┘         │
+                │      │   Slice    │              │
+                │      │ Interconnect│              │
+                │  ┌───┴────┐  ┌────┴───┐         │
+   Ports 25-36 ─┤──│ Slice 2│──│ Slice 3│─────────┤── Ports 37-48
+                │  └────────┘  └────────┘         │
+                └─────────────────────────────────┘</div>
+
+        <h3>Forwarding Pipeline (Per Slice)</h3>
+        <ol>
+          <li><strong>IFC (Input Forwarding Controller)</strong> &mdash; Parses headers, performs L2/L3/ACL/QoS lookups</li>
+          <li><strong>IDC (Input Data-Path Controller)</strong> &mdash; Buffering and ingress queuing</li>
+          <li><strong>EDC (Egress Data-Path Controller)</strong> &mdash; Output buffering and scheduling</li>
+          <li><strong>EFC (Egress Forwarding Controller)</strong> &mdash; Header rewrite, VXLAN encapsulation, transmit</li>
+        </ol>
+
+        <h3>Programmable Forwarding Tables (Flex Tiles)</h3>
+        <p><strong>Flex Tiles</strong> provide a fungible pool of table entries that can be dynamically resized based on deployment:</p>
+        <ul>
+          <li>IPv4/IPv6 unicast LPM (Longest Prefix Match)</li>
+          <li>Host Route Table (HRT)</li>
+          <li>MAC address / adjacency tables</li>
+          <li>ECMP tables, ACI policy tables, ACL/QoS TCAM</li>
+        </ul>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div>Unlike older fixed-table ASICs, Cloud Scale can dynamically reallocate forwarding resources. A spine can maximize LPM entries while a leaf maximizes MAC/host entries.</div></div>
+
+        <h2>Nexus 9500 Chassis Architecture</h2>
+<div class="ascii-diagram">   ┌──────────────────────────────────────────────────┐
+   │              Nexus 9508 Chassis                   │
+   │                                                   │
+   │  ┌──────┐ ┌──────┐ ┌──────┐ ... ┌──────┐        │
+   │  │ LC 1 │ │ LC 2 │ │ LC 3 │     │ LC 8 │  Lines  │
+   │  └──┬───┘ └──┬───┘ └──┬───┘     └──┬───┘  Cards  │
+   │     │        │        │             │             │
+   │  ┌──┴────────┴────────┴─────────────┴──┐         │
+   │  │         Fabric Module Mesh          │         │
+   │  │   FM1   FM2   FM3   FM4   FM5   FM6 │         │
+   │  └────────────────────────────────────┘         │
+   │                                                   │
+   │  ┌──────────┐  ┌──────────┐                      │
+   │  │  SUP A   │  │  SUP B   │  (Active/Standby)   │
+   │  └──────────┘  └──────────┘                      │
+   └──────────────────────────────────────────────────┘</div>
+        <p>Chassis options: <strong>9504</strong> (4-slot), <strong>9508</strong> (8-slot), <strong>9516</strong> (16-slot). All traffic between line cards is load-balanced across all fabric modules.</p>
+
+        <h2>Nexus 9400 Architecture</h2>
+        <p>New centralized modular design: 4RU chassis, 8 expansion slots, up to 64x 400G, 25.6 Tbps capacity, MACsec on all ports, PTP Class C timing.</p>
+      </div>
+    </div>
+
+    <!-- ==================== PART 3 ==================== -->
+    <div class="section" id="part3">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num green">03</span>
+        <span class="section-title">Layer 2 Technologies</span>
+        <span class="section-badge critical">Critical</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: vPC Architecture</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="15 -5 1500 770" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<rect x="30" y="60" width="550" height="380" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="0.2"/>
+<rect x="620" y="60" width="450" height="200" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="0.2"/>
+<rect x="1100" y="60" width="400" height="420" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="0.2"/>
+<rect x="620" y="280" width="450" height="200" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="0.2"/>
+<rect x="30" y="500" width="1040" height="250" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="0.2"/>
+<text x="600" y="37" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Cisco Nexus vPC Architecture and Failure Scenarios</text>
+<text x="310" y="82" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#006600">Normal Operation</text>
+<text x="850" y="82" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#CC6600">Failure 1: Peer-Link Down (Keepalive UP)</text>
+<text x="1300" y="82" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#006600">vPC Best Practices</text>
+<rect x="180" y="95" width="250" height="25" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="305" y="111" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">vPC Domain 100</text>
+<rect x="640" y="100" width="140" height="50" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="710" y="121" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Primary</text>
+<text x="710" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">ALL PORTS UP</text>
+<text x="815" y="123" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">X</text>
+<rect x="850" y="100" width="140" height="50" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="121" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Secondary</text>
+<text x="920" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">vPC PORTS SHUT</text>
+<text x="1125" y="211" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">1. peer-link: 2x 10G or 40G+ in port-channel</text>
+<text x="1125" y="226" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">2. peer-keepalive: Use mgmt0 or dedicated VRF</text>
+<text x="1125" y="241" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">NEVER use peer-link path</text>
+<text x="1125" y="256" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">3. Enable peer-gateway (route peer MAC)</text>
+<text x="1125" y="271" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">4. Enable peer-switch (shared STP root)</text>
+<text x="1125" y="286" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">5. delay restore 150 (prevent blackhole)</text>
+<text x="1125" y="301" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">6. auto-recovery (dual reboot recovery)</text>
+<text x="1125" y="316" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">7. ip arp synchronize</text>
+<text x="1125" y="331" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">8. Separate physical paths for peer-link</text>
+<text x="1125" y="346" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">and keepalive links</text>
+<rect x="80" y="130" width="160" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="160" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Nexus A</text>
+<text x="160" y="166" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">PRIMARY</text>
+<text x="160" y="181" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Priority: 2000</text>
+<text x="160" y="196" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">System MAC: lower</text>
+<rect x="370" y="130" width="160" height="80" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="450" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Nexus B</text>
+<text x="450" y="166" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">SECONDARY</text>
+<text x="450" y="181" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Priority: 32667</text>
+<text x="450" y="196" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">System MAC: higher</text>
+<rect x="230" y="145" width="150" height="50" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="305" y="158" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Peer-Link (Po1)</text>
+<text x="305" y="174" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">2x40G, trunk all VLANs</text>
+<text x="305" y="188" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Control + Data</text>
+<text x="650" y="184" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Secondary shuts all vPC members</text>
+<text x="650" y="198" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Orphan ports on Secondary become unreachable</text>
+<text x="650" y="212" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">All traffic via Primary only</text>
+<text x="305" y="231" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Peer-Keepalive</text>
+<text x="305" y="245" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">mgmt0 (L3 heartbeat)</text>
+<text x="850" y="302" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#000000">CRITICAL: Split-Brain (Both Links Down)</text>
+<rect x="190" y="300" width="230" height="60" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="305" y="318" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Server / Access Switch</text>
+<text x="305" y="334" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">LACP Port Channel</text>
+<text x="305" y="348" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Sees ONE logical switch)</text>
+<text x="815" y="338" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">X</text>
+<rect x="640" y="320" width="140" height="50" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="710" y="341" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Thinks: PRIMARY</text>
+<text x="710" y="356" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">ALL PORTS UP</text>
+<rect x="850" y="320" width="140" height="50" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="341" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Thinks: PRIMARY</text>
+<text x="920" y="356" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">ALL PORTS UP</text>
+<text x="815" y="368" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">X</text>
+<text x="650" y="400" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">DANGER: Both switches think they are Primary!</text>
+<text x="650" y="414" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Results: Duplicate traffic, MAC flapping,</text>
+<text x="650" y="428" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">L2 loops, black-holing traffic</text>
+<text x="650" y="442" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Prevention: Independent paths for</text>
+<text x="650" y="456" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">peer-link and keepalive</text>
+<rect x="50" y="390" width="120" height="40" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="110" y="406" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Orphan Port</text>
+<text x="110" y="421" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Single-attached</text>
+<text x="535" y="522" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000066">vPC Consistency Checks</text>
+<rect x="60" y="540" width="450" height="190" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="586" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Type 1 (SUSPEND vPC ports if mismatch)</text>
+<text x="75" y="601" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- STP mode (PVST/MST/Rapid-PVST)</text>
+<text x="75" y="616" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- STP global settings</text>
+<text x="75" y="631" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- VLAN allowed on trunk</text>
+<text x="75" y="646" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- STP interface parameters</text>
+<text x="75" y="661" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- Port mode (access/trunk)</text>
+<text x="75" y="676" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- MTU</text>
+<text x="75" y="691" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- Storm control settings</text>
+<rect x="540" y="540" width="450" height="190" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="555" y="608" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Type 2 (WARNING only, no suspend)</text>
+<text x="555" y="624" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- STP priority</text>
+<text x="555" y="638" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- STP port type</text>
+<text x="555" y="654" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- BPDU filter/guard</text>
+<text x="555" y="668" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- LACP mode</text>
+</svg>
+          </div>
+        </div>
+        <h2>VLANs on NX-OS</h2>
+<pre><code><span class="comment">! Create VLANs</span>
+<span class="keyword">vlan</span> 10
+  name SERVERS
+<span class="keyword">vlan</span> 20
+  name STORAGE
+
+<span class="comment">! Trunk interface</span>
+<span class="keyword">interface</span> Ethernet1/1
+  switchport mode trunk
+  switchport trunk allowed vlan 10,20
+
+<span class="comment">! Access interface</span>
+<span class="keyword">interface</span> Ethernet1/2
+  switchport mode access
+  switchport access vlan 10</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        <p><strong>NX-OS differences:</strong> VLAN 1 cannot be deleted (but can be disabled). VTP is supported but not recommended. VN-Segment mapping available for VXLAN: <code>vlan 10</code> &rarr; <code>vn-segment 10010</code>.</p>
+
+        <h2>vPC (Virtual Port Channel) &mdash; CRITICAL TOPIC</h2>
+        <p>vPC allows two physical Nexus switches to appear as <strong>one logical switch</strong> to a downstream device. All links are active (no STP blocking), providing instant convergence and double bandwidth.</p>
+
+<div class="ascii-diagram">         ┌─────────────────────────────────┐
+         │        vPC Domain               │
+         │                                  │
+    ┌────┴─────┐    Peer-Link    ┌─────────┴───┐
+    │  Nexus A  │◄══════════════►│   Nexus B    │
+    │ (Primary) │    (10G/40G+)  │ (Secondary)  │
+    └─┬───┬──┬─┘                 └─┬──┬───┬────┘
+      │   │  │    Peer-Keepalive   │  │   │
+      │   │  │◄ ─ ─ ─ ─ ─ ─ ─ ─ ►│  │   │
+      │   │  │                     │  │   │
+      │   │  └──────┐   ┌─────────┘  │   │
+      │   │         │   │            │   │
+      │   │    ┌────┴───┴────┐      │   │
+      │   │    │  Server /   │      │   │
+      │   │    │  Switch     │      │   │
+      │   │    │  (LACP)     │      │   │
+      │   │    └─────────────┘      │   │
+      │   └──── vPC member ─────────┘   │
+      └──── Orphan ports (non-vPC) ─────┘</div>
+
+        <h3>vPC Components</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Component</th><th>Purpose</th></tr>
+            <tr><td><strong>vPC Domain</strong></td><td>Logical grouping (must match on both peers)</td></tr>
+            <tr><td><strong>Peer-Link</strong></td><td>Port channel carrying control + data between peers</td></tr>
+            <tr><td><strong>Peer-Keepalive</strong></td><td>Heartbeat link (L3) &mdash; detects if peer is alive</td></tr>
+            <tr><td><strong>vPC Member Port</strong></td><td>Actual port channel facing downstream</td></tr>
+            <tr><td><strong>Orphan Port</strong></td><td>Non-vPC interface (single-attached device)</td></tr>
+          </table>
+        </div>
+
+        <h3>Consistency Checks</h3>
+        <div class="comparison">
+          <div class="compare-card bad">
+            <h4 style="color:var(--red)">Type 1 (Suspend)</h4>
+            <p>Will <strong>shut down</strong> vPC member ports if mismatched:</p>
+            <ul><li>STP mode</li><li>VLAN allowed on trunk</li><li>Port mode (access/trunk)</li><li>MTU</li><li>Storm control</li></ul>
+          </div>
+          <div class="compare-card good">
+            <h4 style="color:var(--accent2)">Type 2 (Graceful)</h4>
+            <p>Logs <strong>warning</strong> but does NOT suspend:</p>
+            <ul><li>STP priority</li><li>STP port type</li><li>BPDU filter/guard</li><li>LACP mode</li></ul>
+          </div>
+        </div>
+
+        <h3>vPC Failure Scenarios</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Scenario</th><th>What Happens</th><th>Impact</th></tr>
+            <tr><td><strong>1. Single member link fails</strong></td><td>Traffic shifts to surviving link</td><td style="color:var(--accent2)">Minimal</td></tr>
+            <tr><td><strong>2. Peer-link fails (keepalive UP)</strong></td><td>Secondary shuts all vPC ports</td><td style="color:var(--accent4)">Half bandwidth lost</td></tr>
+            <tr><td><strong>3. Keepalive fails only</strong></td><td>No immediate impact</td><td style="color:var(--accent4)">Dangerous if peer-link next</td></tr>
+            <tr><td><strong>4. SPLIT-BRAIN (both fail)</strong></td><td>Both think they are Primary</td><td style="color:var(--red)">Duplicate traffic, loops, black-holes</td></tr>
+          </table>
+        </div>
+        <div class="callout critical"><span class="callout-icon">&#9888;</span><div><strong>Split-Brain</strong> is the most dangerous scenario. Both switches keep vPC ports UP, causing MAC flapping, L2 loops, and traffic black-holing. <strong>Prevention:</strong> Use completely independent paths for peer-link and keepalive.</div></div>
+
+        <h3>vPC Configuration</h3>
+<pre><code><span class="comment">! === Enable features ===</span>
+<span class="keyword">feature</span> vpc
+<span class="keyword">feature</span> lacp
+
+<span class="comment">! === Create vPC Domain ===</span>
+<span class="keyword">vpc domain</span> 100
+  role priority 2000
+  peer-keepalive destination 10.201.182.26 source 10.201.182.25
+  peer-gateway
+  peer-switch
+  delay restore 150
+  ip arp synchronize
+  auto-recovery
+
+<span class="comment">! === Create Peer-Link ===</span>
+<span class="keyword">interface</span> port-channel 1
+  switchport mode trunk
+  switchport trunk allowed vlan 1-1000
+  vpc peer-link
+
+<span class="keyword">interface</span> Ethernet1/49-50
+  channel-group 1 mode active
+  no shutdown
+
+<span class="comment">! === Create vPC Member ===</span>
+<span class="keyword">interface</span> port-channel 10
+  switchport mode trunk
+  switchport trunk allowed vlan 10,20
+  vpc 10</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h3>vPC Best Practices</h3>
+        <ul>
+          <li><strong>peer-gateway</strong> &mdash; routes packets destined to peer's HSRP MAC</li>
+          <li><strong>peer-switch</strong> &mdash; both switches share STP root role</li>
+          <li><strong>delay restore 150</strong> &mdash; prevents black-holing after reload</li>
+          <li><strong>auto-recovery</strong> &mdash; recovers after simultaneous reboot</li>
+          <li>Keep peer-link and keepalive on physically separate paths</li>
+        </ul>
+
+        <h2>STP on NX-OS</h2>
+        <p>NX-OS supports <strong>Rapid-PVST+</strong> (default) and <strong>MST</strong>. Does NOT support classic 802.1D or PVST.</p>
+<pre><code><span class="keyword">spanning-tree</span> mode rapid-pvst
+<span class="keyword">spanning-tree</span> vlan 1-100 root primary
+
+<span class="comment">! Edge ports (PortFast equivalent)</span>
+<span class="keyword">interface</span> Ethernet1/1
+  spanning-tree port type edge
+  spanning-tree bpduguard enable
+
+<span class="comment">! Network ports (uplinks)</span>
+<span class="keyword">interface</span> Ethernet1/49
+  spanning-tree port type network</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>FabricPath (Legacy)</h2>
+        <p>Cisco's proprietary L2 multipath before VXLAN. Used IS-IS for L2 routing, allowed ECMP at Layer 2. <span style="color:var(--red);font-weight:600;">Deprecated</span> &mdash; replaced entirely by VXLAN/EVPN. Never use for new designs.</p>
+
+        <h2>Port Channels &amp; LACP</h2>
+<pre><code><span class="comment">! LACP port channel (recommended)</span>
+<span class="keyword">interface</span> port-channel 10
+  switchport mode trunk
+  lacp min-links 2
+
+<span class="keyword">interface</span> Ethernet1/3-4
+  channel-group 10 mode active</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </div>
+    </div>
+
+    <!-- ==================== PART 4 ==================== -->
+    <div class="section" id="part4">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num green">04</span>
+        <span class="section-title">Layer 3 Technologies</span>
+        <span class="section-badge">Routing</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <h2>OSPF on NX-OS</h2>
+        <h3>Key Differences from IOS</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Feature</th><th>NX-OS</th><th>IOS</th></tr>
+            <tr><td>Activation</td><td><code>feature ospf</code> required</td><td>Always available</td></tr>
+            <tr><td>Instance naming</td><td>Alphanumeric (up to 20 chars)</td><td>Numeric only</td></tr>
+            <tr><td>Network statement</td><td>Interface-level <code>ip router ospf</code></td><td><code>network</code> under router</td></tr>
+            <tr><td>Default reference BW</td><td><strong>40 Gbps</strong></td><td>100 Mbps</td></tr>
+            <tr><td>Route redistribution</td><td><strong>Route-map REQUIRED</strong></td><td>Optional</td></tr>
+            <tr><td>VRF support</td><td>Multiple VRFs per instance</td><td>One-to-one</td></tr>
+            <tr><td>Adjacency logging</td><td>OFF by default</td><td>ON by default</td></tr>
+          </table>
+        </div>
+<pre><code><span class="keyword">feature</span> ospf
+
+<span class="keyword">router ospf</span> UNDERLAY
+  router-id 10.1.0.1
+  log-adjacency-changes
+  auto-cost reference-bandwidth 400000
+
+<span class="keyword">interface</span> loopback 0
+  ip address 10.1.0.1/32
+  ip router ospf UNDERLAY area 0.0.0.0
+
+<span class="keyword">interface</span> Ethernet1/1
+  no switchport
+  ip address 10.1.1.0/31
+  ip ospf network point-to-point
+  ip router ospf UNDERLAY area 0.0.0.0</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h3>OSPF Area Types</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Area Type</th><th>Blocks</th><th>Allows</th><th>Use Case</th></tr>
+            <tr><td><strong>Normal (Area 0)</strong></td><td>Nothing</td><td>All LSAs</td><td>Backbone</td></tr>
+            <tr><td><strong>Stub</strong></td><td>Type 5</td><td>Type 1,2,3</td><td>Edge areas</td></tr>
+            <tr><td><strong>Totally Stubby</strong></td><td>Type 3,4,5</td><td>Type 1,2 only</td><td>Simplest edge</td></tr>
+            <tr><td><strong>NSSA</strong></td><td>Type 5</td><td>Type 7</td><td>Limited redistribution</td></tr>
+            <tr><td><strong>Totally NSSA</strong></td><td>Type 3,4,5</td><td>Type 7</td><td>Strictest</td></tr>
+          </table>
+        </div>
+
+        <h2>BGP on NX-OS</h2>
+        <p>MP-BGP with multiple address families, including <strong>L2VPN EVPN</strong> (critical for VXLAN). Supports peer templates, route reflectors, additional paths, BFD integration.</p>
+<pre><code><span class="keyword">feature</span> bgp
+
+<span class="keyword">router bgp</span> 65000
+  router-id 10.1.0.1
+  address-family ipv4 unicast
+    maximum-paths 4
+  address-family l2vpn evpn
+    retain route-target all
+
+  <span class="comment">! Template for leaf peers</span>
+  template peer LEAF-PEER
+    remote-as 65000
+    update-source loopback0
+    address-family l2vpn evpn
+      send-community both
+      route-reflector-client
+
+  neighbor 10.1.0.11
+    inherit peer LEAF-PEER
+    description LEAF-1</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>HSRP / VRRP</h2>
+<pre><code><span class="keyword">feature</span> hsrp
+
+<span class="keyword">interface</span> Vlan 10
+  ip address 10.10.10.2/24
+  hsrp version 2
+  hsrp 10
+    preempt
+    priority 110
+    ip 10.10.10.1
+    timers 1 3</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        <div class="callout warn"><span class="callout-icon">&#9888;</span><div>In VXLAN EVPN fabrics, HSRP/VRRP is <strong>replaced</strong> by Distributed Anycast Gateway. This is covered in Part 9.</div></div>
+
+        <h2>VRF and VRF-Lite</h2>
+<pre><code><span class="keyword">vrf context</span> TENANT-A
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+
+<span class="keyword">interface</span> Vlan 10
+  vrf member TENANT-A       <span class="comment">! Must be BEFORE ip address</span>
+  ip address 10.10.10.1/24</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>PIM (Multicast) on NX-OS</h2>
+        <p>NX-OS does <strong>NOT</strong> support PIM Dense Mode. Only Sparse Mode and SSM.</p>
+<pre><code><span class="keyword">feature</span> pim
+
+<span class="comment">! Static RP</span>
+ip pim rp-address 10.1.0.100 group-list 239.0.0.0/8
+
+<span class="comment">! Anycast RP (for redundancy)</span>
+ip pim anycast-rp 10.1.0.100 10.1.0.1
+ip pim anycast-rp 10.1.0.100 10.1.0.2
+
+<span class="comment">! SSM</span>
+ip pim ssm range 232.0.0.0/8</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </div>
+    </div>
+
+    <!-- ==================== PART 5 ==================== -->
+    <div class="section" id="part5">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num purple">05</span>
+        <span class="section-title">NX-OS vs IOS Differences</span>
+        <span class="section-badge important">Interview</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Feature</th><th>NX-OS</th><th>IOS / IOS-XE</th></tr>
+            <tr><td><strong>Feature activation</strong></td><td><code>feature &lt;name&gt;</code> required</td><td>Always available</td></tr>
+            <tr><td><strong>Process model</strong></td><td>Linux kernel, separate processes</td><td>Monolithic / Linux (IOS-XE)</td></tr>
+            <tr><td><strong>VDC support</strong></td><td>Yes (Nexus 7000)</td><td>No (VSS/StackWise)</td></tr>
+            <tr><td><strong>ISSU</strong></td><td>Non-disruptive upgrades</td><td>Limited/disruptive</td></tr>
+            <tr><td><strong>Config model</strong></td><td>Interface-centric</td><td>Router-process centric</td></tr>
+            <tr><td><strong>Routing instances</strong></td><td>Alphanumeric</td><td>Numeric only</td></tr>
+            <tr><td><strong>Default STP</strong></td><td>Rapid-PVST+</td><td>PVST+</td></tr>
+            <tr><td><strong>Redistribution</strong></td><td>Route-map <strong>mandatory</strong></td><td>Route-map optional</td></tr>
+            <tr><td><strong>NX-API</strong></td><td>REST API built-in</td><td>RESTCONF/NETCONF</td></tr>
+            <tr><td><strong>Reference BW</strong></td><td>40 Gbps</td><td>100 Mbps</td></tr>
+          </table>
+        </div>
+
+        <h2>NX-OS Unique Concepts</h2>
+        <ol>
+          <li><strong>Feature-based licensing:</strong> <code>feature vpc</code>, <code>feature bgp</code>, etc.</li>
+          <li><strong>Checkpointing &amp; Rollback:</strong> <code>checkpoint</code> saves config state</li>
+          <li><strong>NX-API:</strong> REST/JSON API for programmability</li>
+          <li><strong>Scheduler:</strong> Built-in job scheduler for automation</li>
+          <li><strong>POAP:</strong> Power-On Auto Provisioning (zero-touch)</li>
+          <li><strong>EEM:</strong> Embedded Event Manager with Python scripting</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ==================== PART 6 ==================== -->
+    <div class="section" id="part6">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num purple">06</span>
+        <span class="section-title">Nexus vs Catalyst Comparison</span>
+        <span class="section-badge">Comparison</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Aspect</th><th>Nexus</th><th>Catalyst</th></tr>
+            <tr><td><strong>Target</strong></td><td>Data Center</td><td>Campus / Enterprise</td></tr>
+            <tr><td><strong>OS</strong></td><td>NX-OS or ACI</td><td>IOS-XE</td></tr>
+            <tr><td><strong>Fabric Tech</strong></td><td>VXLAN/EVPN, ACI</td><td>SD-Access (LISP/VXLAN)</td></tr>
+            <tr><td><strong>Controller</strong></td><td>APIC, Nexus Dashboard</td><td>Catalyst Center</td></tr>
+            <tr><td><strong>Port Speeds</strong></td><td>10G-400G dominant</td><td>1G-25G dominant</td></tr>
+            <tr><td><strong>Low Latency</strong></td><td>Sub-microsecond (N3K)</td><td>Not optimized</td></tr>
+            <tr><td><strong>FCoE/Storage</strong></td><td>Yes</td><td>No</td></tr>
+            <tr><td><strong>Stacking</strong></td><td>No (uses vPC)</td><td>Yes (StackWise)</td></tr>
+            <tr><td><strong>Scale</strong></td><td>100s-1000s of ports</td><td>10s-100s per closet</td></tr>
+            <tr><td><strong>Power</strong></td><td>DC power options</td><td>PoE/PoE+ for endpoints</td></tr>
+          </table>
+        </div>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div>Catalyst 9000 now supports VXLAN/EVPN (IOS-XE), blurring the line. However, Nexus remains the choice for high-density DC with ACI, advanced telemetry, and sub-microsecond latency.</div></div>
+      </div>
+    </div>
+
+    <!-- ==================== PART 7 ==================== -->
+    <div class="section" id="part7">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num orange">07</span>
+        <span class="section-title">VXLAN Fundamentals (For Legacy Engineers)</span>
+        <span class="section-badge critical">Must Know</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: VXLAN Packet Format</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="35 5 990 620" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<text x="600" y="47" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">VXLAN Packet Encapsulation Format (RFC 7348)</text>
+<text x="600" y="96" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#006600">Original Ethernet Frame (Inner)</text>
+<rect x="200" y="110" width="130" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="265" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Dst MAC</text>
+<text x="265" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Original)</text>
+<rect x="330" y="110" width="130" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="395" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Src MAC</text>
+<text x="395" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Original)</text>
+<rect x="460" y="110" width="80" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="500" y="144" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">EtherType</text>
+<rect x="540" y="110" width="300" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="690" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Original Payload</text>
+<text x="690" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(IP + Data)</text>
+<rect x="840" y="110" width="60" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="870" y="144" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">FCS</text>
+<text x="550" y="201" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#CC0000">VXLAN Encapsulation (+50 bytes overhead)</text>
+<rect x="535" y="195" width="30" height="40" rx="3" ry="3" fill="#CC0000" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="550" y="256" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#000066">VXLAN Encapsulated Packet</text>
+<rect x="50" y="270" width="150" height="100" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="125" y="294" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Outer Ethernet</text>
+<text x="125" y="308" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Dst: Next-hop MAC</text>
+<text x="125" y="324" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Src: VTEP MAC</text>
+<text x="125" y="338" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Type: 0x0800 (IP)</text>
+<text x="125" y="354" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">14 bytes</text>
+<rect x="200" y="270" width="160" height="100" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="280" y="294" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Outer IP Header</text>
+<text x="280" y="308" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Src: Source VTEP IP</text>
+<text x="280" y="324" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Dst: Dest VTEP IP</text>
+<text x="280" y="338" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Proto: UDP (17)</text>
+<text x="280" y="354" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">20 bytes</text>
+<rect x="360" y="270" width="150" height="100" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="435" y="301" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Outer UDP Header</text>
+<text x="435" y="316" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Src: Hash (ECMP)</text>
+<text x="435" y="331" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Dst: 4789</text>
+<text x="435" y="346" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">8 bytes</text>
+<rect x="510" y="270" width="150" height="100" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="585" y="294" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">VXLAN Header</text>
+<text x="585" y="308" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Flags: I=1 (valid)</text>
+<text x="585" y="324" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI: 24-bit</text>
+<text x="585" y="338" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Reserved: 0</text>
+<text x="585" y="354" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">8 bytes</text>
+<rect x="660" y="270" width="350" height="100" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="835" y="308" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Inner Ethernet Frame</text>
+<text x="835" y="324" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Original frame unchanged)</text>
+<text x="835" y="338" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Dst MAC | Src MAC | Payload</text>
+<text x="355" y="396" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#000000">+50 bytes VXLAN overhead → Set underlay MTU to 9216!</text>
+<rect x="100" y="430" width="900" height="180" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="500" y="452" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">VXLAN Header Detail (8 bytes)</text>
+<rect x="120" y="470" width="170" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="205" y="488" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Flags (8 bits)</text>
+<text x="205" y="504" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">R R R R I R R R</text>
+<text x="205" y="518" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">I=1 means valid VNI</text>
+<rect x="290" y="470" width="130" height="60" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5" opacity="1.0"/>
+<text x="355" y="488" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Reserved</text>
+<text x="355" y="504" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">24 bits</text>
+<text x="355" y="518" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Must be 0</text>
+<rect x="420" y="470" width="240" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="540" y="488" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">VNI (24 bits)</text>
+<text x="540" y="504" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">0 to 16,777,215</text>
+<text x="540" y="518" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Identifies the VXLAN segment</text>
+<rect x="660" y="470" width="120" height="60" rx="8" ry="8" fill="#f5f5f5" stroke="#999999" stroke-width="1.5" opacity="1.0"/>
+<text x="720" y="488" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Reserved</text>
+<text x="720" y="504" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">8 bits</text>
+<text x="720" y="518" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Must be 0</text>
+<text x="130" y="558" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Key Points:</text>
+<text x="130" y="574" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- UDP src port = hash of inner headers (enables ECMP load balancing across spine links)</text>
+<text x="130" y="588" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- 24-bit VNI = 16 million segments vs 4094 VLANs (12-bit)</text>
+<text x="130" y="604" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">- MAC-in-UDP encapsulation: Layer 2 over Layer 3</text>
+</svg>
+          </div>
+        </div>
+        <h2>Why VXLAN Exists &mdash; The Problem with VLANs</h2>
+        <div class="comparison">
+          <div class="compare-card bad">
+            <h4 style="color:var(--red)">VLAN Limitations</h4>
+            <ul>
+              <li>Only 4,094 VLANs (12-bit ID)</li>
+              <li>STP blocks redundant links</li>
+              <li>VLANs bound to physical topology</li>
+              <li>L2 domain = broadcast domain</li>
+              <li>No multi-tenancy</li>
+            </ul>
+          </div>
+          <div class="compare-card good">
+            <h4 style="color:var(--accent2)">VXLAN Solutions</h4>
+            <ul>
+              <li>16 million segments (24-bit VNI)</li>
+              <li>L3 ECMP routing (all links active)</li>
+              <li>Workload mobility anywhere</li>
+              <li>Overlay/underlay separation</li>
+              <li>VRF + VNI isolation</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2>What is VXLAN?</h2>
+        <p><strong>VXLAN (Virtual Extensible LAN)</strong> &mdash; RFC 7348 &mdash; is a MAC-in-UDP encapsulation technology that creates Layer 2 overlay networks on top of a Layer 3 underlay. It takes a regular Ethernet frame, wraps it in a UDP packet with a VXLAN header, and sends it across the IP network.</p>
+
+        <h2>VXLAN Packet Format</h2>
+<div class="ascii-diagram">┌────────────────────────────────────────────────────────────────┐
+│                    Outer Ethernet Header                       │
+│  (Src MAC = Egress VTEP MAC, Dst MAC = Next-hop MAC)          │
+├────────────────────────────────────────────────────────────────┤
+│                    Outer IP Header (20 bytes)                  │
+│  (Src IP = Source VTEP IP, Dst IP = Destination VTEP IP)      │
+├────────────────────────────────────────────────────────────────┤
+│                    Outer UDP Header (8 bytes)                  │
+│  Src Port = Hash of inner headers   Dst Port = 4789 (IANA)   │
+├────────────────────────────────────────────────────────────────┤
+│                    VXLAN Header (8 bytes)                      │
+│  Flags: I = 1 (valid VNI)    VNI: 24-bit identifier          │
+├────────────────────────────────────────────────────────────────┤
+│                    Inner Ethernet Frame (Original)             │
+│  (Original Src MAC, Dst MAC, Payload)                         │
+└────────────────────────────────────────────────────────────────┘</div>
+        <ul>
+          <li><strong>Outer UDP Dst Port:</strong> 4789 (IANA standard)</li>
+          <li><strong>Outer UDP Src Port:</strong> Hash of inner headers &rarr; enables ECMP load balancing</li>
+          <li><strong>VNI:</strong> 24-bit &rarr; 16,777,216 possible segments</li>
+          <li><strong>MTU overhead:</strong> ~50 bytes &mdash; set underlay MTU to <strong>9216</strong></li>
+        </ul>
+
+        <h2>VTEP (VXLAN Tunnel Endpoint)</h2>
+<div class="ascii-diagram">                    Underlay Network (L3)
+                 ┌──────────────────────────┐
+   ┌────────┐   │      ┌────────┐          │   ┌────────┐
+   │ VTEP 1 │◄──┼──────│ Spine  │──────────┼──►│ VTEP 2 │
+   │(Leaf 1)│   │      └────────┘          │   │(Leaf 2)│
+   └───┬────┘   └──────────────────────────┘   └───┬────┘
+       │             VXLAN Tunnel                    │
+   ┌───┴───┐    ═ ═ (Overlay L2) ═ ═ ═ ═ ═    ┌───┴───┐
+   │Server │        VNI 10010                  │Server │
+   │  A    │                                   │  B    │
+   └───────┘                                   └───────┘</div>
+
+        <h3>NVE Interface</h3>
+<pre><code><span class="keyword">interface</span> nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback1
+  member vni 10010
+    ingress-replication protocol bgp
+  member vni 50001 associate-vrf</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>How VLANs Map to VXLANs</h2>
+<div class="ascii-diagram">VLAN 10  ──────►  VNI 10010  (L2 VNI)
+VLAN 20  ──────►  VNI 10020  (L2 VNI)
+VLAN 30  ──────►  VNI 10030  (L2 VNI)
+     └──── All in Tenant VRF-A ──────►  VNI 50001  (L3 VNI)</div>
+<pre><code><span class="comment">! VLAN to VNI mapping</span>
+<span class="keyword">vlan</span> 10
+  vn-segment 10010
+
+<span class="keyword">vlan</span> 20
+  vn-segment 10020
+
+<span class="comment">! L3 VNI (transit VLAN)</span>
+<span class="keyword">vlan</span> 2001
+  vn-segment 50001</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        <div class="callout tip"><span class="callout-icon">&#128161;</span><div><strong>Think of it this way:</strong> L2 VNI = your VLAN extended across the fabric. L3 VNI = the "router" connecting different VNIs within a tenant (VRF).</div></div>
+
+        <h2>How VXLAN Maps to EVPN</h2>
+        <p>EVPN is the <strong>control plane</strong> for VXLAN. Without EVPN, VXLAN uses flood-and-learn (doesn't scale).</p>
+        <ul>
+          <li>Each <strong>VNI</strong> maps to an <strong>EVPN Instance (EVI)</strong></li>
+          <li>Each EVI has a <strong>Route Distinguisher (RD)</strong> making it unique in BGP</li>
+          <li>Each EVI has <strong>Route Targets (RT)</strong> controlling import/export</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ==================== PART 8 ==================== -->
+    <div class="section" id="part8">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num orange">08</span>
+        <span class="section-title">BGP EVPN Deep Dive</span>
+        <span class="section-badge critical">Critical</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: EVPN Route Types</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="25 -5 1140 940" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d5" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<text x="600" y="37" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">BGP EVPN Route Types (AFI 25 / SAFI 70)</text>
+<rect x="40" y="70" width="700" height="160" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<rect x="55" y="80" width="40" height="40" rx="3" ry="3" fill="#6c8ebf" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="104" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#ffffff">1</text>
+<text x="115" y="98" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Ethernet Auto-Discovery (EAD)</text>
+<rect x="800" y="80" width="80" height="40" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="840" y="96" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Leaf 1</text>
+<text x="840" y="109" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">ESI-1</text>
+<rect x="920" y="80" width="80" height="40" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="960" y="96" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Leaf 2</text>
+<text x="960" y="109" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">ESI-1</text>
+<rect x="1040" y="100" width="100" height="45" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="1090" y="112" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Remote VTEP</text>
+<text x="1090" y="125" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">ECMP via</text>
+<text x="1090" y="138" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Leaf1 + Leaf2</text>
+<text x="65" y="140" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Purpose: Multihoming — Aliasing + Fast Convergence</text>
+<text x="65" y="154" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">When Generated: When a leaf joins an Ethernet Segment (ESI)</text>
+<text x="65" y="168" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">How it works: Two leafs share same ESI → remote VTEPs learn ECMP paths.</text>
+<text x="65" y="182" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">If one leaf loses link → withdraws Type 1 → remote removes from ECMP (fast convergence)</text>
+<text x="65" y="196" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Sub-types: EAD per ES (segment membership) | EAD per EVI (per-VNI aliasing)</text>
+<rect x="850" y="150" width="80" height="35" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="890" y="164" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Host</text>
+<text x="890" y="176" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">(dual-homed)</text>
+<rect x="40" y="250" width="700" height="150" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<rect x="55" y="260" width="40" height="40" rx="3" ry="3" fill="#82b366" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="284" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#ffffff">2</text>
+<text x="115" y="278" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">MAC/IP Advertisement (Most Important!)</text>
+<rect x="800" y="260" width="80" height="40" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="840" y="276" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Leaf 1</text>
+<text x="840" y="289" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">(VTEP)</text>
+<rect x="1040" y="270" width="100" height="35" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="1090" y="284" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">All Other</text>
+<text x="1090" y="296" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">VTEPs</text>
+<text x="65" y="315" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Purpose: Advertise learned MAC addresses and optionally IP addresses</text>
+<text x="65" y="329" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">When Generated: When a host&#x27;s MAC/ARP is learned on a VTEP</text>
+<text x="65" y="343" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Contains: ESI, MAC Address, IP Address (optional), VNI</text>
+<text x="65" y="357" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">How it works: Host connects → VTEP learns MAC → BGP advertises Type 2 to all VTEPs</text>
+<text x="65" y="371" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">→ Remote VTEPs know exactly where to send traffic (no flooding!)</text>
+<rect x="790" y="330" width="100" height="45" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="840" y="342" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="8" font-weight="normal" fill="#000000">Host A</text>
+<text x="840" y="354" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="8" font-weight="normal" fill="#000000">MAC: aa:bb</text>
+<text x="840" y="366" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="8" font-weight="normal" fill="#000000">IP: 10.10.10.5</text>
+<rect x="40" y="420" width="700" height="130" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<rect x="55" y="430" width="40" height="40" rx="3" ry="3" fill="#d6b656" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="454" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#ffffff">3</text>
+<text x="115" y="448" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Inclusive Multicast Ethernet Tag (IMET)</text>
+<text x="65" y="487" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Purpose: VTEP discovery + BUM traffic replication list</text>
+<text x="65" y="501" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">When Generated: When a VTEP joins a VNI</text>
+<text x="65" y="515" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">How it works: Each VTEP advertises: &quot;I am interested in VNI 10010&quot;</text>
+<text x="65" y="529" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">→ Builds ingress replication list for BUM traffic</text>
+<rect x="40" y="570" width="700" height="130" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<rect x="55" y="580" width="40" height="40" rx="3" ry="3" fill="#9673a6" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="604" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#ffffff">4</text>
+<text x="115" y="598" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Ethernet Segment Route</text>
+<text x="65" y="637" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Purpose: Designated Forwarder (DF) election in multihoming</text>
+<text x="65" y="651" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">When Generated: When multiple VTEPs share an Ethernet Segment (ESI)</text>
+<text x="65" y="665" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">How it works: VTEPs on same ESI exchange Type 4 routes → Elect one DF per VLAN</text>
+<text x="65" y="679" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">→ Only DF forwards BUM traffic on that segment (prevents loops)</text>
+<rect x="790" y="710" width="120" height="60" rx="3" ry="3" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="850" y="730" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">External</text>
+<text x="850" y="742" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Network</text>
+<text x="850" y="756" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">172.16.0.0/16</text>
+<rect x="40" y="720" width="700" height="130" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<rect x="940" y="720" width="70" height="40" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="975" y="736" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Border</text>
+<text x="975" y="749" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">Leaf</text>
+<rect x="1060" y="720" width="80" height="40" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="1100" y="736" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">All Fabric</text>
+<text x="1100" y="749" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">VTEPs</text>
+<rect x="55" y="730" width="40" height="40" rx="3" ry="3" fill="#b85450" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="75" y="754" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#ffffff">5</text>
+<text x="115" y="748" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">IP Prefix Route (RFC 9136)</text>
+<text x="65" y="787" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Purpose: Advertise IP subnets/prefixes (not just host routes)</text>
+<text x="65" y="801" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">When Generated: External routes learned at border leaf</text>
+<text x="65" y="815" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">How it works: Border leaf learns 172.16.0.0/16 from WAN → Advertises Type 5</text>
+<text x="65" y="829" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">→ All VTEPs install prefix in VRF → VXLAN-encapsulated to border for external</text>
+<rect x="800" y="800" width="350" height="120" rx="8" ry="8" fill="#f5f5f5" stroke="#333333" stroke-width="1.5" opacity="1.0"/>
+<text x="815" y="826" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Quick Reference:</text>
+<text x="815" y="841" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Type 1: Multihoming (aliasing/convergence)</text>
+<text x="815" y="856" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Type 2: MAC/IP learning (most common)</text>
+<text x="815" y="871" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Type 3: VTEP discovery (BUM list)</text>
+<text x="815" y="886" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Type 4: DF election (multihoming BUM)</text>
+<text x="815" y="901" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Type 5: IP prefix (external routes)</text>
+</svg>
+          </div>
+        </div>
+        <h2>What is BGP EVPN?</h2>
+        <p>BGP EVPN (RFC 7432, RFC 8365) extends BGP to carry <strong>Layer 2 (MAC) and Layer 3 (IP) reachability</strong> using MP-BGP.</p>
+        <ul>
+          <li><strong>AFI:</strong> 25 (L2VPN)</li>
+          <li><strong>SAFI:</strong> 70 (EVPN)</li>
+          <li>Carries MAC addresses, IPs, and prefixes in BGP NLRI</li>
+          <li>Control-plane based MAC learning (replaces flood-and-learn)</li>
+        </ul>
+
+        <h2>EVPN Route Types &mdash; MUST KNOW ALL FIVE</h2>
+
+        <h3>Route Type 1: Ethernet Auto-Discovery (EAD)</h3>
+        <p><strong>Purpose:</strong> Multihoming &mdash; aliasing and fast convergence. When a host is multihomed to two leaves via the same Ethernet Segment (ESI), both advertise Type 1 routes. Remote VTEPs learn ECMP paths. On failure, withdrawal provides fast convergence.</p>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div><strong>Legacy analogy:</strong> "Advertising that I'm a member of a port channel group, and here's my group ID (ESI)."</div></div>
+
+        <h3>Route Type 2: MAC/IP Advertisement</h3>
+        <p><strong>The most important route type.</strong> Advertises MAC addresses and optionally IP addresses.</p>
+        <ol>
+          <li>Host A connects to Leaf 1, MAC is learned</li>
+          <li>Leaf 1 generates Type 2: "MAC aa:bb:cc... / IP 10.10.10.5 reachable via me on VNI 10010"</li>
+          <li>BGP distributes to all VTEPs &mdash; no flooding needed</li>
+        </ol>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div><strong>Legacy analogy:</strong> A CAM table entry being advertised via BGP instead of learned by flooding.</div></div>
+
+        <h3>Route Type 3: Inclusive Multicast (IMET)</h3>
+        <p><strong>Purpose:</strong> VTEP discovery and BUM handling. Each VTEP advertises Type 3 for each VNI it participates in, building the ingress replication list.</p>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div><strong>Legacy analogy:</strong> "Subscribe me to the multicast group for VLAN 10."</div></div>
+
+        <h3>Route Type 4: Ethernet Segment Route</h3>
+        <p><strong>Purpose:</strong> Designated Forwarder (DF) election in multihoming. Only the DF forwards BUM traffic on a shared segment (prevents loops).</p>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div><strong>Legacy analogy:</strong> STP root election, but for a multi-homed Ethernet Segment.</div></div>
+
+        <h3>Route Type 5: IP Prefix Route</h3>
+        <p><strong>Purpose:</strong> Advertise IP subnets/prefixes (RFC 9136). A border leaf injects external routes as Type 5 into the fabric.</p>
+        <div class="callout info"><span class="callout-icon">&#128218;</span><div><strong>Legacy analogy:</strong> Redistributing external routes into the fabric's EVPN control plane.</div></div>
+
+        <h3>Route Type Summary</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Type</th><th>Name</th><th>Purpose</th><th>Trigger</th></tr>
+            <tr><td><strong>1</strong></td><td>EAD</td><td>Multihoming + fast convergence</td><td>Leaf joins ES</td></tr>
+            <tr><td><strong>2</strong></td><td>MAC/IP</td><td>MAC + IP learning (most common)</td><td>Host learned</td></tr>
+            <tr><td><strong>3</strong></td><td>IMET</td><td>VTEP discovery, BUM list</td><td>VTEP joins VNI</td></tr>
+            <tr><td><strong>4</strong></td><td>ES</td><td>DF election</td><td>Shared ES</td></tr>
+            <tr><td><strong>5</strong></td><td>IP Prefix</td><td>External routes</td><td>Border leaf</td></tr>
+          </table>
+        </div>
+
+        <h2>RD and RT</h2>
+        <p><strong>Route Distinguisher (RD):</strong> Makes routes globally unique. <code>rd auto</code> = router-id + VNI.</p>
+        <p><strong>Route Target (RT):</strong> Controls import/export. Export RT tags routes; Import RT accepts them.</p>
+
+        <h2>ARP Suppression</h2>
+        <div class="comparison">
+          <div class="compare-card bad">
+            <h4 style="color:var(--red)">Without ARP Suppression</h4>
+            <p>ARP broadcast floods to ALL VTEPs, every VTEP processes it. Massive unnecessary traffic.</p>
+          </div>
+          <div class="compare-card good">
+            <h4 style="color:var(--accent2)">With ARP Suppression</h4>
+            <p>Local VTEP checks EVPN database (Type 2 routes), generates ARP reply locally. No flooding!</p>
+          </div>
+        </div>
+<pre><code><span class="keyword">interface</span> nve1
+  member vni 10010
+    suppress-arp</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </div>
+    </div>
+
+    <!-- ==================== PART 9 ==================== -->
+    <div class="section" id="part9">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num orange">09</span>
+        <span class="section-title">VXLAN Fabric Operations</span>
+        <span class="section-badge critical">Critical</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: Anycast Gateway — HSRP vs Distributed</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="15 -5 1200 580" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d6" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<rect x="30" y="60" width="520" height="500" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="0.15"/>
+<rect x="580" y="60" width="620" height="500" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="0.15"/>
+<text x="550" y="37" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Legacy HSRP vs VXLAN Distributed Anycast Gateway</text>
+<text x="305" y="82" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">LEGACY: HSRP/VRRP (Active-Standby)</text>
+<text x="880" y="82" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">VXLAN: Distributed Anycast Gateway (All Active!)</text>
+<rect x="60" y="110" width="180" height="90" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="150" y="128" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Switch A</text>
+<text x="150" y="144" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">HSRP ACTIVE</text>
+<text x="150" y="158" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Real IP: .2</text>
+<text x="150" y="174" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VIP: .1</text>
+<text x="150" y="188" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VMAC: 0000.0c07.ac0a</text>
+<rect x="340" y="110" width="180" height="90" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="430" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Switch B</text>
+<text x="430" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">HSRP STANDBY</text>
+<text x="430" y="166" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Real IP: .3</text>
+<text x="430" y="181" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Idle (wasted!)</text>
+<rect x="610" y="110" width="170" height="90" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="695" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 1</text>
+<text x="695" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">ACTIVE GW</text>
+<text x="695" y="166" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">IP: 10.10.10.1</text>
+<text x="695" y="181" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">MAC: 0000.2222.3333</text>
+<rect x="830" y="110" width="170" height="90" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="915" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 2</text>
+<text x="915" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">ACTIVE GW</text>
+<text x="915" y="166" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">IP: 10.10.10.1</text>
+<text x="915" y="181" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">MAC: 0000.2222.3333</text>
+<rect x="1040" y="110" width="140" height="90" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="1110" y="136" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 3</text>
+<text x="1110" y="151" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">ACTIVE GW</text>
+<text x="1110" y="166" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">IP: 10.10.10.1</text>
+<text x="1110" y="181" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">MAC: 0000.2222.3333</text>
+<text x="885" y="222" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="bold" fill="#000000">SAME IP + SAME MAC on ALL leaves!</text>
+<text x="280" y="221" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Traffic TROMBONES</text>
+<text x="280" y="235" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">to Active switch!</text>
+<rect x="80" y="280" width="110" height="40" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="135" y="296" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Host A</text>
+<text x="135" y="310" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">GW: 10.10.10.1</text>
+<rect x="370" y="280" width="110" height="40" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="425" y="296" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Host B</text>
+<text x="425" y="310" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">GW: 10.10.10.1</text>
+<rect x="640" y="280" width="110" height="40" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="695" y="296" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Host A</text>
+<text x="695" y="310" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">GW: 10.10.10.1</text>
+<rect x="870" y="280" width="110" height="40" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="925" y="296" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Host B</text>
+<text x="925" y="310" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">GW: 10.10.10.1</text>
+<rect x="1060" y="280" width="110" height="40" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="1115" y="296" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Host C</text>
+<text x="1115" y="310" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">GW: 10.10.10.1</text>
+<text x="70" y="368" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Problems:</text>
+<text x="70" y="382" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">1. Standby switch wastes capacity</text>
+<text x="70" y="396" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">2. Host B traffic must cross to Switch A (trombone)</text>
+<text x="70" y="410" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">3. Failover takes seconds (HSRP timers)</text>
+<text x="70" y="424" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">4. VIP only on one switch at a time</text>
+<text x="70" y="438" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">5. Suboptimal traffic path</text>
+<text x="620" y="368" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Benefits:</text>
+<text x="620" y="382" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">1. ALL leaves are active gateways (full utilization)</text>
+<text x="620" y="396" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">2. No tromboning — traffic routed at closest leaf</text>
+<text x="620" y="410" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">3. No failover delay — other leaves still have GW</text>
+<text x="620" y="424" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">4. Same IP AND MAC on every leaf</text>
+<text x="620" y="438" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">5. Optimal traffic path always</text>
+<rect x="610" y="460" width="550" height="90" rx="8" ry="8" fill="#f5f5f5" stroke="#333333" stroke-width="1.5" opacity="1.0"/>
+<text x="625" y="473" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Configuration (on every leaf):</text>
+<text x="625" y="487" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">fabric forwarding anycast-gateway-mac 0000.2222.3333</text>
+<text x="625" y="501" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">interface Vlan 10</text>
+<text x="625" y="515" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">vrf member TENANT-A</text>
+<text x="625" y="529" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">ip address 10.10.10.1/24</text>
+<text x="625" y="543" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">fabric forwarding mode anycast-gateway</text>
+</svg>
+          </div>
+        </div>
+        <h2>Distributed Anycast Gateway &mdash; Replacing HSRP/VRRP</h2>
+        <h3>The Legacy Problem</h3>
+<div class="ascii-diagram">    ┌────────┐         ┌────────┐
+    │Switch A│         │Switch B│
+    │HSRP Act│         │HSRP Sby│     &lt;-- Only Active forwards!
+    │.1 (VIP)│         │.3      │
+    └───┬────┘         └───┬────┘
+    ════╪══════════════════╪════  VLAN 10
+    ┌───┴───┐          ┌───┴───┐
+    │Host A │          │Host B │      &lt;-- Host B traffic trombones
+    └───────┘          └───────┘</div>
+
+        <h3>The VXLAN Solution</h3>
+<div class="ascii-diagram">    ┌────────┐                    ┌────────┐
+    │ Leaf 1 │                    │ Leaf 2 │
+    │GW: .1  │                    │GW: .1  │
+    │MAC:0001│                    │MAC:0001│   &lt;-- Same IP AND MAC!
+    └───┬────┘                    └───┬────┘
+    ════╪═══════════════════════════╪════  VNI 10010
+    ┌───┴───┐                    ┌───┴───┐
+    │Host A │                    │Host B │    &lt;-- Both route locally!
+    └───────┘                    └───────┘</div>
+        <p>Every leaf is the default gateway with the <strong>same IP and MAC</strong>. No tromboning. No failover delay.</p>
+<pre><code><span class="comment">! Global anycast MAC (SAME ON ALL LEAVES)</span>
+<span class="keyword">fabric forwarding</span> anycast-gateway-mac 0000.2222.3333
+
+<span class="comment">! SVI with anycast gateway (same IP on ALL leaves)</span>
+<span class="keyword">interface</span> Vlan 10
+  vrf member TENANT-A
+  ip address 10.10.10.1/24
+  fabric forwarding mode anycast-gateway</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>L2 VNI vs L3 VNI</h2>
+        <div class="comparison">
+          <div class="compare-card">
+            <h4 style="color:var(--accent)">L2 VNI (Bridging)</h4>
+            <ul>
+              <li>Maps to a single VLAN</li>
+              <li>Same-subnet connectivity</li>
+              <li>One per VLAN</li>
+              <li>MAC learning + BUM</li>
+            </ul>
+          </div>
+          <div class="compare-card">
+            <h4 style="color:var(--accent3)">L3 VNI (Routing)</h4>
+            <ul>
+              <li>Maps to a VRF (tenant)</li>
+              <li>Inter-subnet routing</li>
+              <li>One per VRF</li>
+              <li>Uses transit VLAN</li>
+            </ul>
+          </div>
+        </div>
+
+        
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: L2 VNI vs L3 VNI Traffic Flow</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="15 -5 1370 800" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d7" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<rect x="30" y="60" width="1340" height="310" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="0.15"/>
+<rect x="30" y="400" width="1340" height="380" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="0.15"/>
+<text x="600" y="37" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">L2 VNI (Bridging) vs L3 VNI (Routing) Traffic Flow</text>
+<text x="600" y="82" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="bold" fill="#000000">L2 VNI: Same Subnet (Bridging) — e.g., Both hosts on VLAN 10 / VNI 10010</text>
+<rect x="560" y="100" width="120" height="60" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="620" y="118" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Spine</text>
+<text x="620" y="134" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Pure L3 Router)</text>
+<text x="620" y="148" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">No VTEP</text>
+<text x="610" y="201" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">VXLAN Tunnel (L2 VNI 10010)</text>
+<text x="610" y="216" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Outer: VTEP1 IP → VTEP2 IP | UDP 4789 | VNI 10010</text>
+<text x="610" y="231" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Inner: Original L2 Frame (same subnet)</text>
+<rect x="200" y="190" width="140" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="270" y="208" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 1 (VTEP)</text>
+<text x="270" y="224" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI 10010</text>
+<text x="270" y="238" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Encapsulate</text>
+<rect x="880" y="190" width="140" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="950" y="208" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 2 (VTEP)</text>
+<text x="950" y="224" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI 10010</text>
+<text x="950" y="238" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Decapsulate</text>
+<rect x="200" y="290" width="140" height="50" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="270" y="304" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Host A</text>
+<text x="270" y="318" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">VLAN 10</text>
+<text x="270" y="332" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">10.10.10.5</text>
+<rect x="880" y="290" width="140" height="50" rx="8" ry="8" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="950" y="304" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Host B</text>
+<text x="950" y="318" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">VLAN 10</text>
+<text x="950" y="332" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">10.10.10.20</text>
+<text x="60" y="356" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Flow: Host A → Leaf 1 encapsulates with VNI 10010 → IP routed via Spine → Leaf 2 decapsulates → Host B</text>
+<text x="60" y="370" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Key: Same subnet = L2 VNI only, no routing needed. Frame is bridged across the fabric.</text>
+<text x="600" y="422" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="bold" fill="#000000">L3 VNI: Different Subnets (Routing — Symmetric IRB) — Host A on VLAN 10, Host C on VLAN 20</text>
+<rect x="1100" y="430" width="250" height="70" rx="8" ry="8" fill="#f5f5f5" stroke="#333333" stroke-width="1.5" opacity="1.0"/>
+<text x="1115" y="454" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Summary:</text>
+<text x="1115" y="468" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">L2 VNI (10010, 10020) = Per-VLAN bridging</text>
+<text x="1115" y="484" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">L3 VNI (50001) = Per-VRF routing (one per tenant)</text>
+<rect x="560" y="445" width="120" height="50" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="620" y="466" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Spine</text>
+<text x="620" y="481" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Pure L3 Router)</text>
+<rect x="140" y="520" width="200" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="240" y="542" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Leaf 1 (VTEP)</text>
+<text x="240" y="556" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">1. Receives from Host A</text>
+<text x="240" y="570" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">2. Routes VLAN10→VRF</text>
+<text x="240" y="584" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">3. Encap with L3 VNI 50001</text>
+<rect x="880" y="520" width="200" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="980" y="542" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Leaf 2 (VTEP)</text>
+<text x="980" y="556" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">4. Decap L3 VNI 50001</text>
+<text x="980" y="570" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">5. Routes VRF→VLAN20</text>
+<text x="980" y="584" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">6. Delivers to Host C</text>
+<text x="610" y="541" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">VXLAN Tunnel (L3 VNI 50001 — VRF Transit)</text>
+<text x="610" y="556" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Outer: VTEP1 IP → VTEP2 IP | UDP 4789 | VNI 50001</text>
+<text x="610" y="571" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Inner: Routed packet (different subnets)</text>
+<rect x="140" y="640" width="200" height="60" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="240" y="653" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="bold" fill="#000000">Host A</text>
+<text x="240" y="666" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">VLAN 10 / VNI 10010</text>
+<text x="240" y="679" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">10.10.10.5</text>
+<text x="240" y="692" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">GW: 10.10.10.1 (anycast)</text>
+<rect x="880" y="640" width="200" height="60" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="980" y="653" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="bold" fill="#000000">Host C</text>
+<text x="980" y="666" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">VLAN 20 / VNI 10020</text>
+<text x="980" y="679" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">10.20.20.10</text>
+<text x="980" y="692" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="9" font-weight="normal" fill="#000000">GW: 10.20.20.1 (anycast)</text>
+<text x="60" y="736" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Symmetric IRB Flow: Host A → Leaf 1 (route from VNI 10010 to VRF, encap with L3 VNI 50001) → Spine → Leaf 2 (decap L3 VNI, route from VRF to VNI 10020) → Host C</text>
+<text x="60" y="750" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Key: Different subnets = L3 VNI carries routed traffic between VTEPs. Both ingress and egress VTEPs perform routing (symmetric).</text>
+</svg>
+          </div>
+        </div>
+<h3>Symmetric IRB (Inter-Subnet Routing)</h3>
+        <p>Host A (VLAN 10) &rarr; Host B (VLAN 20):</p>
+        <ol>
+          <li>Host A sends to default gateway (Leaf 1)</li>
+          <li>Leaf 1 routes from VNI 10010 to VRF TENANT-A</li>
+          <li>Leaf 1 encapsulates with <strong>L3 VNI 50001</strong>, sends to Leaf 2</li>
+          <li>Leaf 2 decapsulates, routes from VRF into VNI 10020</li>
+          <li>Leaf 2 delivers to Host B</li>
+        </ol>
+        <div class="callout tip"><span class="callout-icon">&#128161;</span><div><strong>Symmetric IRB</strong> means both ingress AND egress VTEPs perform routing. This is the recommended mode on Nexus.</div></div>
+
+        <h2>ECMP in VXLAN Fabric</h2>
+        <p>The underlay uses OSPF/IS-IS with ECMP. Each leaf has equal-cost paths to every other leaf via all spines. VXLAN outer UDP source port (hash of inner headers) enables per-flow load balancing. Adding more spines = more bandwidth.</p>
+
+        <h2>Multicast vs Ingress Replication</h2>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Option</th><th>How It Works</th><th>Pro</th><th>Con</th></tr>
+            <tr><td><strong>Multicast Underlay</strong></td><td>Multicast group per VNI</td><td>Efficient for large BUM</td><td>Complex underlay config</td></tr>
+            <tr><td><strong>Ingress Replication</strong></td><td>Unicast copies to each VTEP</td><td>Simple, no multicast needed</td><td>Higher load for BUM</td></tr>
+          </table>
+        </div>
+        <div class="callout tip"><span class="callout-icon">&#128161;</span><div>Modern deployments overwhelmingly use <strong>Ingress Replication</strong> for simplicity.</div></div>
+      </div>
+    </div>
+
+    <!-- ==================== PART 10 ==================== -->
+    <div class="section" id="part10">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num orange">10</span>
+        <span class="section-title">Complete VXLAN Configuration Examples</span>
+        <span class="section-badge">Configs</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <h2>Complete Leaf Switch Configuration</h2>
+<pre><code><span class="comment">! ============================================================</span>
+<span class="comment">! LEAF SWITCH - Full VXLAN BGP EVPN Configuration</span>
+<span class="comment">! ============================================================</span>
+
+<span class="comment">! Step 1: Enable Features</span>
+<span class="keyword">feature</span> ospf
+<span class="keyword">feature</span> bgp
+<span class="keyword">feature</span> pim
+<span class="keyword">feature</span> interface-vlan
+<span class="keyword">feature</span> vn-segment-vlan-based
+<span class="keyword">feature</span> nv overlay
+nv overlay evpn
+
+<span class="comment">! Step 2: Anycast Gateway MAC (SAME ON ALL LEAVES)</span>
+<span class="keyword">fabric forwarding</span> anycast-gateway-mac 0000.2222.3333
+
+<span class="comment">! Step 3: VLANs with VNI Mapping</span>
+<span class="keyword">vlan</span> 10
+  name SERVERS
+  vn-segment 10010
+<span class="keyword">vlan</span> 20
+  name DATABASE
+  vn-segment 10020
+<span class="keyword">vlan</span> 2001
+  name L3VNI-TENANT-A
+  vn-segment 50001
+
+<span class="comment">! Step 4: VRF with L3 VNI</span>
+<span class="keyword">vrf context</span> TENANT-A
+  vni 50001
+  rd auto
+  address-family ipv4 unicast
+    route-target both auto
+    route-target both auto evpn
+
+<span class="comment">! Step 5: Loopbacks</span>
+<span class="keyword">interface</span> loopback 0
+  ip address 10.1.0.11/32
+  ip router ospf UNDERLAY area 0.0.0.0
+<span class="keyword">interface</span> loopback 1
+  ip address 10.1.1.11/32
+  ip router ospf UNDERLAY area 0.0.0.0
+
+<span class="comment">! Step 6: Underlay (OSPF)</span>
+<span class="keyword">router ospf</span> UNDERLAY
+  router-id 10.1.0.11
+<span class="keyword">interface</span> Ethernet1/49
+  no switchport
+  mtu 9216
+  ip address 10.1.100.1/31
+  ip ospf network point-to-point
+  ip router ospf UNDERLAY area 0.0.0.0
+
+<span class="comment">! Step 7: BGP with EVPN</span>
+<span class="keyword">router bgp</span> 65000
+  router-id 10.1.0.11
+  address-family l2vpn evpn
+  neighbor 10.1.0.1
+    remote-as 65000
+    update-source loopback0
+    address-family l2vpn evpn
+      send-community both
+  vrf TENANT-A
+    address-family ipv4 unicast
+      advertise l2vpn evpn
+
+<span class="comment">! Step 8: NVE (VTEP)</span>
+<span class="keyword">interface</span> nve1
+  no shutdown
+  host-reachability protocol bgp
+  source-interface loopback1
+  member vni 10010
+    ingress-replication protocol bgp
+  member vni 10020
+    ingress-replication protocol bgp
+  member vni 50001 associate-vrf
+
+<span class="comment">! Step 9: SVIs with Anycast Gateway</span>
+<span class="keyword">interface</span> Vlan 10
+  vrf member TENANT-A
+  ip address 10.10.10.1/24
+  fabric forwarding mode anycast-gateway
+<span class="keyword">interface</span> Vlan 2001
+  vrf member TENANT-A
+  ip forward
+
+<span class="comment">! Step 10: EVPN</span>
+<span class="keyword">evpn</span>
+  vni 10010 l2
+    rd auto
+    route-target import auto
+    route-target export auto</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>Complete Spine Switch Configuration</h2>
+<pre><code><span class="comment">! SPINE - Route Reflector (NO VTEP, NO VNI, NO VLAN)</span>
+<span class="keyword">feature</span> ospf
+<span class="keyword">feature</span> bgp
+
+<span class="keyword">interface</span> loopback 0
+  ip address 10.1.0.1/32
+  ip router ospf UNDERLAY area 0.0.0.0
+
+<span class="keyword">router ospf</span> UNDERLAY
+  router-id 10.1.0.1
+
+<span class="keyword">router bgp</span> 65000
+  address-family l2vpn evpn
+    retain route-target all
+  template peer LEAF
+    remote-as 65000
+    update-source loopback0
+    address-family l2vpn evpn
+      send-community both
+      route-reflector-client
+  neighbor 10.1.0.11
+    inherit peer LEAF</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        <div class="callout warn"><span class="callout-icon">&#9888;</span><div>The spine does NOT run NVE. It has NO VTEPs, NO VNIs, NO VLANs. It is purely an underlay router and BGP route reflector.</div></div>
+
+        <h2>Border Leaf (External Connectivity)</h2>
+<pre><code><span class="comment">! External-facing sub-interface (VRF-Lite)</span>
+<span class="keyword">interface</span> Ethernet1/3.2
+  encapsulation dot1q 2
+  vrf member TENANT-A
+  ip address 10.31.95.31/24
+
+<span class="comment">! BGP to External Router</span>
+<span class="keyword">router bgp</span> 65000
+  vrf TENANT-A
+    neighbor 10.31.95.95
+      remote-as 65099
+      address-family ipv4 unicast
+        route-map EXTCON-FILTER out</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      </div>
+    </div>
+
+    <!-- ==================== PART 11 ==================== -->
+    <div class="section" id="part11">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num pink">11</span>
+        <span class="section-title">Cisco Nexus Dashboard &amp; NDFC</span>
+        <span class="section-badge">Operations</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: NDFC Day-0 / Day-1 / Day-2 Operations</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="15 -5 1150 595" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d8" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<line x1="430" y1="360" x2="455" y2="360" stroke="#333333" stroke-width="3" marker-end="url(#d8)"/>
+<line x1="790" y1="360" x2="815" y2="360" stroke="#333333" stroke-width="3" marker-end="url(#d8)"/>
+<rect x="30" y="160" width="400" height="400" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="0.2"/>
+<rect x="450" y="160" width="340" height="400" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="0.2"/>
+<rect x="810" y="160" width="340" height="400" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="0.2"/>
+<text x="600" y="34" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Cisco Nexus Dashboard Fabric Controller (NDFC) — Lifecycle Operations</text>
+<rect x="200" y="55" width="800" height="30" rx="8" ry="8" fill="#333333" stroke="#333333" stroke-width="1.5" opacity="1.0"/>
+<text x="600" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#FFFFFF">Cisco Nexus Dashboard (Platform)</text>
+<rect x="250" y="95" width="130" height="40" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="315" y="111" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NDFC</text>
+<text x="315" y="126" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Fabric Controller</text>
+<rect x="530" y="95" width="130" height="40" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="595" y="111" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NDI</text>
+<text x="595" y="126" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Insights</text>
+<rect x="810" y="95" width="130" height="40" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="875" y="111" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">NDO</text>
+<text x="875" y="126" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Orchestrator</text>
+<text x="240" y="178" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Day 0: Fabric Foundation</text>
+<text x="240" y="194" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Build the Underlay)</text>
+<text x="620" y="178" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Day 1: Overlay Services</text>
+<text x="620" y="194" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Provision Networks)</text>
+<text x="990" y="178" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Day 2: Operations</text>
+<text x="990" y="194" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(Maintain &amp; Monitor)</text>
+<rect x="50" y="210" width="180" height="55" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="60" y="226" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">1. Create Fabric</text>
+<text x="60" y="240" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Template: VXLAN EVPN</text>
+<text x="60" y="254" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Input: Name + BGP ASN</text>
+<rect x="240" y="210" width="170" height="55" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="250" y="226" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">2. Discover Switches</text>
+<text x="250" y="240" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Seed IP or POAP</text>
+<text x="250" y="254" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Greenfield / Brownfield</text>
+<rect x="470" y="210" width="200" height="45" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="480" y="228" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">1. Create VRFs (Tenants)</text>
+<text x="480" y="242" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Name, VNI, RD, RT</text>
+<rect x="830" y="210" width="180" height="40" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="226" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Config Compliance</text>
+<text x="920" y="240" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Detect drift from intent</text>
+<rect x="830" y="260" width="180" height="40" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="276" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Change Control</text>
+<text x="920" y="290" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Rollback capability</text>
+<rect x="470" y="270" width="200" height="45" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="480" y="288" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">2. Create Networks</text>
+<text x="480" y="302" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">VLAN, VNI, Subnet, GW</text>
+<rect x="50" y="280" width="180" height="45" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="60" y="298" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">3. Assign Roles</text>
+<text x="60" y="312" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Leaf / Spine / Border / ToR</text>
+<rect x="240" y="280" width="170" height="45" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="250" y="298" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">4. vPC Pairing</text>
+<text x="250" y="312" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">One-click automation</text>
+<rect x="830" y="310" width="180" height="40" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="326" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Performance Monitoring</text>
+<text x="920" y="340" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">SNMP, Telemetry</text>
+<rect x="470" y="330" width="200" height="45" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="480" y="348" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">3. Attach to Switches</text>
+<text x="480" y="362" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Leaf interfaces, port groups</text>
+<rect x="80" y="340" width="280" height="110" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="90" y="356" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">5. Recalculate &amp; Deploy</text>
+<text x="90" y="370" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Auto-generates:</text>
+<text x="90" y="384" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">- OSPF/IS-IS underlay</text>
+<text x="90" y="398" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">- Loopback IPs</text>
+<text x="90" y="412" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">- P2P links</text>
+<text x="90" y="426" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">- BGP sessions (RR)</text>
+<text x="90" y="440" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">- PIM/RP config</text>
+<rect x="830" y="360" width="180" height="40" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="376" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Image Management</text>
+<text x="920" y="390" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">NX-OS upgrades</text>
+<rect x="470" y="390" width="200" height="55" rx="8" ry="8" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5" opacity="1.0"/>
+<text x="480" y="406" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">4. Preview &amp; Deploy</text>
+<text x="480" y="420" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Review generated config</text>
+<text x="480" y="434" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">before pushing to devices</text>
+<rect x="830" y="410" width="180" height="40" rx="8" ry="8" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="426" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Topology Visualization</text>
+<text x="920" y="440" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Real-time fabric view</text>
+<rect x="100" y="465" width="250" height="30" rx="8" ry="8" fill="#6c8ebf" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="225" y="483" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">Result: Fully functional underlay</text>
+<rect x="500" y="465" width="220" height="30" rx="8" ry="8" fill="#82b366" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="610" y="483" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">Result: Working VXLAN overlay</text>
+<rect x="860" y="465" width="220" height="30" rx="8" ry="8" fill="#9673a6" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="970" y="483" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">Result: Ongoing assurance</text>
+<rect x="200" y="520" width="800" height="55" rx="8" ry="8" fill="#f5f5f5" stroke="#333333" stroke-width="1.5" opacity="1.0"/>
+<text x="215" y="536" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="bold" fill="#000000">Key NDFC Automation: Template-based framework → Save → Preview → Deploy workflow</text>
+<text x="215" y="550" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Automatic resource allocation (IP, VLAN, VNI, port-channel) → No manual resource tracking</text>
+<text x="215" y="564" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#000000">Out-of-box policies for Cisco best practices → Custom freeform CLI also supported</text>
+</svg>
+          </div>
+        </div>
+        <h2>Nexus Dashboard Platform</h2>
+        <p>Unified operations platform hosting multiple services:</p>
+        <ul>
+          <li><strong>NDFC</strong> (Nexus Dashboard Fabric Controller) &mdash; Fabric deployment &amp; management</li>
+          <li><strong>NDI</strong> (Nexus Dashboard Insights) &mdash; Analytics &amp; assurance</li>
+          <li><strong>NDO</strong> (Nexus Dashboard Orchestrator) &mdash; Multi-site orchestration</li>
+        </ul>
+
+        <h2>NDFC Lifecycle Operations</h2>
+        <h3>Day-0: Building the Fabric</h3>
+        <ol>
+          <li><strong>Create Fabric</strong> &mdash; Template: VXLAN EVPN, input BGP ASN</li>
+          <li><strong>Discover Switches</strong> &mdash; Seed IP or POAP (Greenfield/Brownfield)</li>
+          <li><strong>Assign Roles</strong> &mdash; Leaf, Spine, Border Leaf, ToR</li>
+          <li><strong>vPC Pairing</strong> &mdash; One-click automation</li>
+          <li><strong>Deploy Underlay</strong> &mdash; Auto-generates OSPF, loopbacks, P2P links, BGP, PIM</li>
+        </ol>
+
+        <h3>Day-1: Overlay Provisioning</h3>
+        <ol>
+          <li>Create VRFs (tenants) with VNI</li>
+          <li>Create Networks (subnets) within VRF</li>
+          <li>Attach to leaf interfaces</li>
+          <li>Preview generated config</li>
+          <li>Deploy</li>
+        </ol>
+
+        <h3>Day-2: Ongoing Management</h3>
+        <ul>
+          <li><strong>Config Compliance</strong> &mdash; Detect drift from intended state</li>
+          <li><strong>Change Control</strong> &mdash; Rollback capability</li>
+          <li><strong>Performance Monitoring</strong> &mdash; SNMP, Telemetry</li>
+          <li><strong>Image Management</strong> &mdash; NX-OS upgrades</li>
+          <li><strong>Topology Visualization</strong> &mdash; Real-time fabric view</li>
+        </ul>
+
+        <h3>NDFC Templates</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Template</th><th>Use Case</th></tr>
+            <tr><td>Data Center VXLAN EVPN</td><td>Primary &mdash; Nexus 3000/9000 fabric</td></tr>
+            <tr><td>Enhanced Classic LAN</td><td>Non-VXLAN traditional management</td></tr>
+            <tr><td>External Fabric</td><td>WAN/external device management</td></tr>
+            <tr><td>MSD (Multi-Site Domain)</td><td>Multi-fabric orchestration</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PART 12 ==================== -->
+    <div class="section" id="part12">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num pink">12</span>
+        <span class="section-title">VXLAN vs Legacy Networks</span>
+        <span class="section-badge important">Key Comparison</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Aspect</th><th>Legacy VLAN</th><th>VXLAN EVPN</th></tr>
+            <tr><td><strong>Scalability</strong></td><td>4,094 VLANs</td><td>16 million VNIs</td></tr>
+            <tr><td><strong>Architecture</strong></td><td>3-tier</td><td>Leaf-Spine (Clos)</td></tr>
+            <tr><td><strong>Loop Prevention</strong></td><td>STP (blocks links)</td><td>L3 ECMP (all active)</td></tr>
+            <tr><td><strong>MAC Learning</strong></td><td>Flood-and-learn</td><td>BGP EVPN control plane</td></tr>
+            <tr><td><strong>Gateway</strong></td><td>HSRP/VRRP</td><td>Distributed Anycast</td></tr>
+            <tr><td><strong>Multi-Tenancy</strong></td><td>VRF-Lite (complex)</td><td>VRF + VNI (built-in)</td></tr>
+            <tr><td><strong>Bandwidth</strong></td><td>~50% (STP blocking)</td><td>~100% (ECMP)</td></tr>
+            <tr><td><strong>Convergence</strong></td><td>Seconds (STP)</td><td>Sub-second (BGP)</td></tr>
+            <tr><td><strong>DCI</strong></td><td>OTV, VPLS</td><td>VXLAN Multi-Site</td></tr>
+          </table>
+        </div>
+
+        <h2>Legacy &rarr; VXLAN Mapping</h2>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Legacy Concept</th><th>VXLAN Equivalent</th></tr>
+            <tr><td>VLAN 10</td><td>VNI 10010 (L2 VNI)</td></tr>
+            <tr><td>Trunk</td><td>VXLAN Tunnel (NVE)</td></tr>
+            <tr><td>STP Root Bridge</td><td>Not needed (L3 ECMP)</td></tr>
+            <tr><td>HSRP Virtual IP</td><td>Anycast Gateway (same on ALL leaves)</td></tr>
+            <tr><td>Access Switch</td><td>Leaf Switch</td></tr>
+            <tr><td>Distribution Switch</td><td>Not needed</td></tr>
+            <tr><td>Core Switch</td><td>Spine Switch</td></tr>
+            <tr><td>Inter-VLAN Routing</td><td>L3 VNI + Symmetric IRB</td></tr>
+            <tr><td>Spanning Tree</td><td>Nothing (ECMP handles it)</td></tr>
+          </table>
+        </div>
+
+        <h2>Key Mindset Shifts</h2>
+        <ol>
+          <li><strong>Stop thinking in L2 paths</strong> &mdash; the underlay is all L3</li>
+          <li><strong>Every leaf is a router AND a gateway</strong></li>
+          <li><strong>No more STP</strong> &mdash; redundancy from ECMP</li>
+          <li><strong>MAC tables distributed via BGP</strong></li>
+          <li><strong>MTU matters</strong> &mdash; 50-byte overhead, set underlay to 9216</li>
+          <li><strong>Troubleshooting changes:</strong> <code>show bgp l2vpn evpn</code>, <code>show nve peers</code>, <code>show nve vni</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ==================== PART 13 ==================== -->
+    <div class="section" id="part13">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num pink">13</span>
+        <span class="section-title">Clos Fabric Architecture</span>
+        <span class="section-badge">Design</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+
+        <div class="diagram-container" style="margin: 1.5rem 0; padding: 1rem; background: #1a1a2e; border: 1px solid #444; border-radius: 8px; overflow-x: auto;">
+          <h3 style="color: #7fdbca; margin: 0 0 0.8rem 0; font-size: 1rem;">&#128202; Architecture Diagram: Leaf-Spine Clos Architecture</h3>
+          <div style="background: #fff; border-radius: 6px; padding: 0.5rem; overflow-x: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="15 -5 1280 680" style="width:100%;height:auto;max-height:650px;background:#ffffff;border-radius:6px;">
+<defs>
+<marker id="d2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+<polygon points="0 0, 10 3.5, 0 7" fill="#333333"/>
+</marker>
+</defs>
+<rect x="100" y="290" width="1000" height="110" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="0.3"/>
+<rect x="30" y="450" width="1140" height="130" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="0.3"/>
+<text x="600" y="37" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="bold" fill="#000000">Leaf-Spine (Clos) Architecture - VXLAN EVPN Fabric</text>
+<rect x="480" y="60" width="240" height="100" rx="3" ry="3" fill="#f5f5f5" stroke="#666666" stroke-width="1.5" opacity="1.0"/>
+<text x="600" y="106" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">External Network</text>
+<text x="600" y="121" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">(WAN / Internet / Other DC)</text>
+<rect x="520" y="190" width="160" height="70" rx="8" ry="8" fill="#f8cecc" stroke="#b85450" stroke-width="1.5" opacity="1.0"/>
+<text x="600" y="214" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Border Leaf</text>
+<text x="600" y="228" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VRF-Lite / eBGP</text>
+<text x="600" y="244" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">to External</text>
+<text x="120" y="306" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#B85450">SPINE LAYER (BGP Route Reflectors, NO VTEPs)</text>
+<rect x="200" y="315" width="160" height="70" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="280" y="331" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Spine 1</text>
+<text x="280" y="346" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9500/9364C</text>
+<text x="280" y="361" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Route Reflector</text>
+<text x="280" y="376" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">10.1.0.1</text>
+<rect x="520" y="315" width="160" height="70" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="600" y="331" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Spine 2</text>
+<text x="600" y="346" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9500/9364C</text>
+<text x="600" y="361" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Route Reflector</text>
+<text x="600" y="376" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">10.1.0.2</text>
+<rect x="840" y="315" width="160" height="70" rx="8" ry="8" fill="#fff2cc" stroke="#d6b656" stroke-width="1.5" opacity="1.0"/>
+<text x="920" y="331" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Spine 3</text>
+<text x="920" y="346" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9500/9364C</text>
+<text x="920" y="361" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Route Reflector</text>
+<text x="920" y="376" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">10.1.0.3</text>
+<text x="1180" y="351" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#009900">ECMP: All spine links active</text>
+<text x="1180" y="365" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#009900">No STP needed</text>
+<text x="1180" y="431" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#0000CC">Every Leaf connects to</text>
+<text x="1180" y="445" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#0000CC">EVERY Spine (full mesh)</text>
+<text x="50" y="466" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#0000CC">LEAF LAYER (VTEPs, Anycast Gateway, L2/L3 VNI)</text>
+<rect x="50" y="480" width="160" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="130" y="501" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 1</text>
+<text x="130" y="516" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9300-FX3</text>
+<text x="130" y="531" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VTEP: 10.1.1.11</text>
+<text x="130" y="546" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI: 10010, 10020</text>
+<rect x="260" y="480" width="160" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="340" y="501" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 2</text>
+<text x="340" y="516" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9300-FX3</text>
+<text x="340" y="531" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VTEP: 10.1.1.12</text>
+<text x="340" y="546" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI: 10010, 10020</text>
+<rect x="470" y="480" width="160" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="550" y="501" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 3</text>
+<text x="550" y="516" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9300-FX3</text>
+<text x="550" y="531" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VTEP: 10.1.1.13</text>
+<text x="550" y="546" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI: 10010, 10030</text>
+<rect x="680" y="480" width="160" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="760" y="501" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 4</text>
+<text x="760" y="516" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9300-FX3</text>
+<text x="760" y="531" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VTEP: 10.1.1.14</text>
+<text x="760" y="546" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI: 10020, 10030</text>
+<rect x="890" y="480" width="160" height="80" rx="8" ry="8" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5" opacity="1.0"/>
+<text x="970" y="501" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#000000">Leaf 5</text>
+<text x="970" y="516" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">N9300-FX3</text>
+<text x="970" y="531" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VTEP: 10.1.1.15</text>
+<text x="970" y="546" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VNI: 10010, 10030</text>
+<text x="1190" y="511" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#CC6600">2 hops between any</text>
+<text x="1190" y="525" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" font-weight="normal" fill="#CC6600">two servers (deterministic)</text>
+<rect x="90" y="610" width="40" height="50" rx="3" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="110" y="631" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Server A</text>
+<text x="110" y="646" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VLAN 10</text>
+<rect x="300" y="610" width="40" height="50" rx="3" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="320" y="631" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Server B</text>
+<text x="320" y="646" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VLAN 20</text>
+<rect x="510" y="610" width="40" height="50" rx="3" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="530" y="631" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Server C</text>
+<text x="530" y="646" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VLAN 10</text>
+<rect x="720" y="610" width="40" height="50" rx="3" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="740" y="631" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Server D</text>
+<text x="740" y="646" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VLAN 30</text>
+<rect x="930" y="610" width="40" height="50" rx="3" ry="3" fill="#ffffff" stroke="#000000" stroke-width="1.5" opacity="1.0"/>
+<text x="950" y="631" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">Server E</text>
+<text x="950" y="646" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="normal" fill="#000000">VLAN 10</text>
+</svg>
+          </div>
+        </div>
+        <h2>Leaf-Spine vs Traditional 3-Tier</h2>
+        <div class="comparison">
+          <div class="compare-card bad">
+            <h4 style="color:var(--red)">3-Tier (Legacy)</h4>
+<div class="ascii-diagram" style="font-size:11px;color:var(--text-dim)">        ┌──────┐
+        │ Core │
+        └──┬┬──┘
+     ┌─────┘└─────┐
+  ┌──┴──┐     ┌──┴──┐
+  │Dist1│     │Dist2│
+  └─┬┬──┘     └──┬┬─┘
+ ┌──┘└─┐     ┌───┘└──┐
+┌┴─┐ ┌─┴┐ ┌─┴┐ ┌──┴┐
+│A1│ │A2│ │A3│ │A4 │
+└──┘ └──┘ └──┘ └───┘</div>
+            <ul><li>STP blocks links</li><li>Variable hop count (2-6)</li><li>North-South optimized</li></ul>
+          </div>
+          <div class="compare-card good">
+            <h4 style="color:var(--accent2)">Leaf-Spine (Clos)</h4>
+<div class="ascii-diagram" style="font-size:11px;color:var(--accent2)">  ┌───┐  ┌───┐  ┌───┐
+  │SP1│  │SP2│  │SP3│
+  └┬┬┬┘  └┬┬┬┘  └┬┬┬┘
+   │││    │││    │││
+ ┌─┘│└┐ ┌┘│└┐ ┌┘│└─┐
+┌┴─┐┌┴┐┌┴┐┌┴┐┌┴┐┌─┴┐
+│L1││L2││L3││L4││L5││L6│
+└──┘└──┘└──┘└──┘└──┘└──┘</div>
+            <ul><li>All links active (ECMP)</li><li>Always 2 hops</li><li>East-West optimized</li></ul>
+          </div>
+        </div>
+
+        <h3>Switch Roles</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Role</th><th>Function</th><th>Hardware</th></tr>
+            <tr><td><strong>Leaf</strong></td><td>Connects to servers, VTEP functions</td><td>Nexus 9300-FX3</td></tr>
+            <tr><td><strong>Spine</strong></td><td>Interconnects leaves, BGP RR</td><td>Nexus 9500</td></tr>
+            <tr><td><strong>Border Leaf</strong></td><td>External connectivity</td><td>Nexus 9300</td></tr>
+            <tr><td><strong>Border Gateway</strong></td><td>Multi-Site</td><td>Nexus 9300/9500</td></tr>
+            <tr><td><strong>Super Spine</strong></td><td>5-stage Clos</td><td>Nexus 9500</td></tr>
+          </table>
+        </div>
+
+        <h3>Why Leaf-Spine Wins</h3>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Metric</th><th>3-Tier</th><th>Leaf-Spine</th></tr>
+            <tr><td>Hop count</td><td>2-6 (variable)</td><td style="color:var(--accent2)"><strong>Always 2</strong></td></tr>
+            <tr><td>Latency</td><td>Variable</td><td style="color:var(--accent2)"><strong>Deterministic</strong></td></tr>
+            <tr><td>Bandwidth</td><td>~50% (STP)</td><td style="color:var(--accent2)"><strong>~100% (ECMP)</strong></td></tr>
+            <tr><td>Scalability</td><td>Limited</td><td style="color:var(--accent2)"><strong>Linear</strong></td></tr>
+            <tr><td>East-West</td><td>Poor</td><td style="color:var(--accent2)"><strong>Excellent</strong></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PART 14 ==================== -->
+    <div class="section" id="part14">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num pink">14</span>
+        <span class="section-title">Interview Tips &amp; Common Questions</span>
+        <span class="section-badge critical">Interview</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <h2>Likely Interview Questions</h2>
+        <h3>Platform</h3>
+        <ol>
+          <li>What are the differences between Nexus 9300, 9400, and 9500?</li>
+          <li>Explain Cloud Scale ASIC architecture and flex tiles</li>
+          <li>When would you choose Nexus over Catalyst?</li>
+        </ol>
+        <h3>vPC</h3>
+        <ol start="4">
+          <li>Explain vPC and all its failure scenarios</li>
+          <li>What happens during a split-brain? How to prevent?</li>
+          <li>Type 1 vs Type 2 consistency checks?</li>
+          <li>Why is peer-gateway important?</li>
+        </ol>
+        <h3>VXLAN/EVPN</h3>
+        <ol start="8">
+          <li>Walk me through the VXLAN packet format</li>
+          <li>Explain all 5 EVPN route types</li>
+          <li>L2 VNI vs L3 VNI?</li>
+          <li>How does anycast gateway work?</li>
+          <li>Explain symmetric vs asymmetric IRB</li>
+          <li>How does ARP suppression work?</li>
+          <li>Role of spine in VXLAN EVPN?</li>
+        </ol>
+        <h3>Architecture</h3>
+        <ol start="15">
+          <li>Design a VXLAN fabric for 500 servers across 2 DCs</li>
+          <li>OSPF vs IS-IS, multicast vs ingress replication?</li>
+          <li>How to handle external connectivity?</li>
+        </ol>
+
+        <h2>Key Verification Commands</h2>
+<pre><code><span class="comment">! VXLAN/EVPN</span>
+<span class="command">show nve peers</span>
+<span class="command">show nve vni</span>
+<span class="command">show bgp l2vpn evpn summary</span>
+<span class="command">show bgp l2vpn evpn</span>
+<span class="command">show bgp l2vpn evpn route-type 2</span>
+<span class="command">show l2route evpn mac all</span>
+<span class="command">show fabric forwarding anycast-gateway</span>
+
+<span class="comment">! Underlay</span>
+<span class="command">show ip ospf neighbors</span>
+<span class="command">show ip route</span>
+
+<span class="comment">! vPC</span>
+<span class="command">show vpc brief</span>
+<span class="command">show vpc consistency-parameters global</span>
+<span class="command">show vpc peer-keepalive</span>
+<span class="command">show vpc role</span></code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+
+        <h2>Design Best Practices (Quick Reference)</h2>
+        <ol>
+          <li><strong>Underlay MTU:</strong> 9216 (jumbo frames)</li>
+          <li><strong>Underlay Routing:</strong> OSPF with point-to-point links</li>
+          <li><strong>BGP Design:</strong> iBGP with spines as Route Reflectors</li>
+          <li><strong>BUM Handling:</strong> Ingress Replication (simpler)</li>
+          <li><strong>Anycast Gateway:</strong> Same MAC and IP on ALL leaves</li>
+          <li><strong>L3 VNI:</strong> One per VRF, transit VLAN with no user traffic</li>
+          <li><strong>Symmetric IRB:</strong> Recommended for inter-subnet routing</li>
+          <li><strong>vPC:</strong> Still used at leaf pairs for server dual-homing</li>
+          <li><strong>Border Leaf:</strong> VRF-Lite (eBGP) for external connectivity</li>
+          <li><strong>Spine:</strong> No VTEPs, no VNIs &mdash; pure routing + RR</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ==================== GLOSSARY ==================== -->
+    <div class="section" id="glossary">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num blue">A</span>
+        <span class="section-title">Glossary</span>
+        <span class="section-badge">Reference</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr><td><strong>VTEP</strong></td><td>VXLAN Tunnel Endpoint &mdash; encaps/decaps VXLAN</td></tr>
+            <tr><td><strong>VNI</strong></td><td>VXLAN Network Identifier &mdash; 24-bit segment ID</td></tr>
+            <tr><td><strong>NVE</strong></td><td>Network Virtualization Edge &mdash; VTEP interface on NX-OS</td></tr>
+            <tr><td><strong>L2 VNI</strong></td><td>Layer 2 VNI for bridging within a VLAN</td></tr>
+            <tr><td><strong>L3 VNI</strong></td><td>Layer 3 VNI for inter-VNI routing within a VRF</td></tr>
+            <tr><td><strong>EVPN</strong></td><td>Ethernet VPN &mdash; BGP-based control plane for VXLAN</td></tr>
+            <tr><td><strong>EVI</strong></td><td>EVPN Instance &mdash; maps to a VNI</td></tr>
+            <tr><td><strong>IRB</strong></td><td>Integrated Routing and Bridging</td></tr>
+            <tr><td><strong>RD</strong></td><td>Route Distinguisher &mdash; makes routes unique in BGP</td></tr>
+            <tr><td><strong>RT</strong></td><td>Route Target &mdash; controls import/export policy</td></tr>
+            <tr><td><strong>ESI</strong></td><td>Ethernet Segment Identifier</td></tr>
+            <tr><td><strong>DF</strong></td><td>Designated Forwarder &mdash; elected for BUM in multihoming</td></tr>
+            <tr><td><strong>IMET</strong></td><td>Inclusive Multicast Ethernet Tag &mdash; Type 3 route</td></tr>
+            <tr><td><strong>BUM</strong></td><td>Broadcast, Unknown Unicast, Multicast traffic</td></tr>
+            <tr><td><strong>ACI</strong></td><td>Application Centric Infrastructure</td></tr>
+            <tr><td><strong>NDFC</strong></td><td>Nexus Dashboard Fabric Controller</td></tr>
+            <tr><td><strong>NDI</strong></td><td>Nexus Dashboard Insights</td></tr>
+            <tr><td><strong>POAP</strong></td><td>Power-On Auto Provisioning</td></tr>
+            <tr><td><strong>Clos</strong></td><td>Multi-stage non-blocking switching architecture</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STUDY PLAN ==================== -->
+    <div class="section" id="studyplan">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-num green">B</span>
+        <span class="section-title">5-Day Study Plan</span>
+        <span class="section-badge">Plan</span>
+        <span class="section-chevron">&#9656;</span>
+      </div>
+      <div class="section-body">
+        <div class="day-cards">
+          <div class="day-card"><div class="day-num">1</div><div class="day-label">Platform + Architecture</div><div class="day-topics">Parts 1, 2, 5, 6<br>Nexus families, ASIC, NX-OS vs IOS</div></div>
+          <div class="day-card"><div class="day-num">2</div><div class="day-label">L2 Technologies</div><div class="day-topics">Part 3<br>vPC deep dive, STP, Port Channels</div></div>
+          <div class="day-card"><div class="day-num">3</div><div class="day-label">L3 + VXLAN Basics</div><div class="day-topics">Parts 4, 7<br>OSPF/BGP, VRF, VXLAN fundamentals</div></div>
+          <div class="day-card"><div class="day-num">4</div><div class="day-label">EVPN Deep Dive</div><div class="day-topics">Parts 8, 9<br>Route types, Anycast GW, IRB</div></div>
+          <div class="day-card"><div class="day-num">5</div><div class="day-label">Design + Operations</div><div class="day-topics">Parts 10-14<br>Configs, NDFC, Clos, Interview</div></div>
+        </div>
+
+        <h2>Self-Check Progress</h2>
+        <ul class="check-list">
+          <li><input type="checkbox" id="c1"><label for="c1">Part 1: Nexus Product Family</label></li>
+          <li><input type="checkbox" id="c2"><label for="c2">Part 2: Architecture Deep Dive</label></li>
+          <li><input type="checkbox" id="c3"><label for="c3">Part 3: Layer 2 Technologies (vPC!)</label></li>
+          <li><input type="checkbox" id="c4"><label for="c4">Part 4: Layer 3 Technologies</label></li>
+          <li><input type="checkbox" id="c5"><label for="c5">Part 5: NX-OS vs IOS Differences</label></li>
+          <li><input type="checkbox" id="c6"><label for="c6">Part 6: Nexus vs Catalyst</label></li>
+          <li><input type="checkbox" id="c7"><label for="c7">Part 7: VXLAN Fundamentals</label></li>
+          <li><input type="checkbox" id="c8"><label for="c8">Part 8: BGP EVPN (All 5 Route Types!)</label></li>
+          <li><input type="checkbox" id="c9"><label for="c9">Part 9: Fabric Operations (Anycast GW!)</label></li>
+          <li><input type="checkbox" id="c10"><label for="c10">Part 10: Configuration Examples</label></li>
+          <li><input type="checkbox" id="c11"><label for="c11">Part 11: Nexus Dashboard / NDFC</label></li>
+          <li><input type="checkbox" id="c12"><label for="c12">Part 12: VXLAN vs Legacy</label></li>
+          <li><input type="checkbox" id="c13"><label for="c13">Part 13: Clos Architecture</label></li>
+          <li><input type="checkbox" id="c14"><label for="c14">Part 14: Interview Questions Practiced</label></li>
+        </ul>
+        <p style="margin-top:20px;color:var(--text-dim);font-style:italic">Focus on explaining <strong>WHY</strong> each technology exists, <strong>HOW</strong> it works at the packet level, and <strong>WHEN</strong> to use it. Good luck!</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// Toggle section
+function toggleSection(header) {
+  header.classList.toggle('open');
+}
+
+// Expand / Collapse all
+function expandAll() {
+  document.querySelectorAll('.section-header').forEach(h => h.classList.add('open'));
+}
+function collapseAll() {
+  document.querySelectorAll('.section-header').forEach(h => h.classList.remove('open'));
+}
+
+// Toggle sidebar (mobile)
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Copy code
+function copyCode(btn) {
+  const code = btn.parentElement.querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const link = document.querySelector(`.nav-link[data-section="${id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '-80px 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = Math.min(100, Math.round((h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = pct + '% read';
+});
+
+// Search
+const searchBox = document.getElementById('searchBox');
+searchBox.addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  document.querySelectorAll('.section').forEach(sec => {
+    if (!q) { sec.style.display = ''; return; }
+    const text = sec.textContent.toLowerCase();
+    sec.style.display = text.includes(q) ? '' : 'none';
+    if (text.includes(q)) sec.querySelector('.section-header').classList.add('open');
+  });
+});
+
+// Ctrl+K for search
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    searchBox.focus();
+  }
+});
+
+// Save checkbox state
+document.querySelectorAll('.check-list input').forEach(cb => {
+  const saved = localStorage.getItem('nexus_' + cb.id);
+  if (saved === 'true') cb.checked = true;
+  cb.addEventListener('change', () => localStorage.setItem('nexus_' + cb.id, cb.checked));
+});
+
+// Close sidebar on nav link click (mobile)
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 900) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+    // Open the target section
+    const targetId = link.getAttribute('data-section');
+    const targetSection = document.getElementById(targetId);
+    if (targetSection) {
+      targetSection.querySelector('.section-header').classList.add('open');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

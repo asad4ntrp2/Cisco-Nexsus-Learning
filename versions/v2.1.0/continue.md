@@ -24,20 +24,6 @@
 - [x] Part 16: Stacking vs VPC — Complete Comparison
 - [x] Draw.io Diagrams (9 diagrams created)
 
-## New in v2.2.0
-
-### HTML Dashboard Sync
-- [x] index.html synced with all v2.0.0 content (DAD, EVPN Guide, Stacking vs VPC)
-- [x] index.html synced with all v2.1.0 content (Private VLANs)
-- [x] PVLAN diagram added to index.html with vibrant gradient styling
-- [x] PVLAN diagram added to Diagrams Gallery (9th diagram)
-- [x] Parts 15-16 added to index.html with full content
-- [x] Sidebar navigation updated (Parts 15-16, Advanced Topics group)
-- [x] Landing page updated (16 sections, 9 diagrams, 6-day plan)
-- [x] Glossary expanded with 17 new terms
-- [x] Study plan updated to 6 days with Parts 15-16 checkboxes
-- [x] Version archive created (versions/ directory with v1.1.0 through v2.1.0)
-
 ## New in v2.1.0
 
 ### Section 3.8: Private VLANs (PVLANs)
@@ -160,4 +146,4 @@ Work through these without looking at the guide:
 
 ---
 
-*Last Updated: February 18, 2026 (v2.2.0)*
+*Last Updated: February 18, 2026 (v2.1.0)*

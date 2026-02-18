@@ -8,7 +8,7 @@
 
 - [x] Part 1: Nexus Product Family Overview (all models)
 - [x] Part 2: Architecture Deep Dive (Cloud Scale ASIC, 9500 chassis, 9400)
-- [x] Part 3: Layer 2 Technologies (vPC, STP, FabricPath, port channels, **DAD**, **Private VLANs**)
+- [x] Part 3: Layer 2 Technologies (vPC, STP, FabricPath, port channels, **DAD**)
 - [x] Part 4: Layer 3 Technologies (OSPF, BGP, HSRP, VRF, PIM, PBR)
 - [x] Part 5: NX-OS vs IOS Differences
 - [x] Part 6: Nexus vs Catalyst Comparison
@@ -22,35 +22,7 @@
 - [x] Part 14: Interview Tips & Common Questions
 - [x] Part 15: EVPN Comprehensive Guide (types, use cases, real-world examples)
 - [x] Part 16: Stacking vs VPC — Complete Comparison
-- [x] Draw.io Diagrams (9 diagrams created)
-
-## New in v2.2.0
-
-### HTML Dashboard Sync
-- [x] index.html synced with all v2.0.0 content (DAD, EVPN Guide, Stacking vs VPC)
-- [x] index.html synced with all v2.1.0 content (Private VLANs)
-- [x] PVLAN diagram added to index.html with vibrant gradient styling
-- [x] PVLAN diagram added to Diagrams Gallery (9th diagram)
-- [x] Parts 15-16 added to index.html with full content
-- [x] Sidebar navigation updated (Parts 15-16, Advanced Topics group)
-- [x] Landing page updated (16 sections, 9 diagrams, 6-day plan)
-- [x] Glossary expanded with 17 new terms
-- [x] Study plan updated to 6 days with Parts 15-16 checkboxes
-- [x] Version archive created (versions/ directory with v1.1.0 through v2.1.0)
-
-## New in v2.1.0
-
-### Section 3.8: Private VLANs (PVLANs)
-- [x] What are Private VLANs — full theory with ASCII architecture diagram
-- [x] Three port types: Promiscuous, Community, Isolated
-- [x] How PVLANs maintain security (hardware-enforced, L2 attack defense)
-- [x] Communication matrix (who can talk to whom)
-- [x] How PVLANs communicate with other VLANs (inter-VLAN routing, ip local-proxy-arp)
-- [x] Full NX-OS configuration example
-- [x] Verification commands
-- [x] Real-world use cases (colocation, DMZ, hotel WiFi, PCI-DSS)
-- [x] PVLANs in VXLAN environment (VNI mapping, config, benefits, limitations)
-- [x] Draw.io diagram: 09_Private_VLAN_Architecture.drawio
+- [x] Draw.io Diagrams (8 diagrams created)
 
 ## New in v2.0.0
 
@@ -89,8 +61,6 @@
 - [ ] Practice configuring VXLAN EVPN on NX-OS simulator (CML/VIRL or NX-OSv)
 - [ ] Lab the vPC failure scenarios hands-on
 - [ ] Lab DAD failure scenarios (peer-link down + keepalive up)
-- [ ] Lab Private VLANs — configure promiscuous, community, and isolated ports
-- [ ] Test PVLAN isolation: verify isolated hosts cannot reach each other
 - [ ] Review `show` commands and troubleshooting workflows
 - [ ] Practice explaining EVPN route types verbally (whiteboard practice)
 - [ ] Practice explaining Stacking vs vPC differences verbally
@@ -155,9 +125,7 @@ Work through these without looking at the guide:
 9. **NEW:** What is the difference between stacking and vPC? When would you use each?
 10. **NEW:** Name 3 real-world EVPN use cases and explain why EVPN is the right choice for each.
 11. **NEW:** On which devices is vPC used vs stacking? What are the limitations of each?
-12. **NEW:** What are Private VLANs? Explain the three port types and draw the communication matrix.
-13. **NEW:** How would you use PVLANs in a VXLAN EVPN fabric? What are the benefits?
 
 ---
 
-*Last Updated: February 18, 2026 (v2.2.0)*
+*Last Updated: February 18, 2026*
