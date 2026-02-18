@@ -29,7 +29,12 @@ versions/
 │   ├── README.md
 │   ├── VERSION.md
 │   └── continue.md
-└── v2.1.0/            ← Private VLANs (PVLANs) chapter
+├── v2.1.0/            ← Private VLANs (PVLANs) chapter
+│   ├── index.html
+│   ├── README.md
+│   ├── VERSION.md
+│   └── continue.md
+└── v2.2.0/            ← HTML Dashboard Sync & Version Archive
     ├── index.html
     ├── README.md
     ├── VERSION.md
@@ -46,6 +51,7 @@ versions/
 | v1.3.1  | 2026-02-14 | `b118da7` | Update documentation, version history, and landing page |
 | v2.0.0  | 2026-02-18 | `08bf94c` | Add DAD, EVPN Comprehensive Guide, Stacking vs VPC chapters |
 | v2.1.0  | 2026-02-18 | `e4e7f68` | Add Private VLANs (PVLANs) chapter with diagram |
+| v2.2.0  | 2026-02-18 | `e7d5861` | HTML Dashboard Sync, PVLAN diagram, version archive |
 
 ## How These Files Were Extracted
 
