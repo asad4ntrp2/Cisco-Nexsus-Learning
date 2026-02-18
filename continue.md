@@ -24,6 +24,75 @@
 - [x] Part 16: Stacking vs VPC — Complete Comparison
 - [x] Draw.io Diagrams (9 diagrams created)
 
+## New in v2.3.0
+
+### Diagram Color Standardization
+- [x] All 9 inline SVG diagrams updated to use the same vibrant gradient color palette
+- [x] All 9 gallery SVG diagrams updated to match
+- [x] Replaced washed-out pastel gradients with saturated vibrant gradients
+- [x] Diagram Style Guide added to this file (see below)
+
+---
+
+## Diagram Style Guide — MANDATORY for All Future Diagrams
+
+**All diagrams in this project (inline SVG in index.html, gallery SVG, and draw.io files) MUST use the following standardized vibrant gradient color palette.** This ensures visual consistency across the entire learning guide.
+
+### Standard Gradient Palette
+
+| Color Name | Purpose | Start Color | End Color | Example Usage |
+|------------|---------|-------------|-----------|---------------|
+| **Blue** | Primary elements, links, ports | `#74b9ff` | `#0984e3` | Switches, port channels, VTEPs |
+| **Green** | Active/healthy, current gen | `#55efc4` | `#00b894` | Active states, recommended platforms |
+| **Purple** | Special/overlay, control plane | `#a29bfe` | `#6c5ce7` | EVPN, overlay, promiscuous ports |
+| **Red** | Failure/danger, critical | `#ff7675` | `#d63031` | Failure scenarios, isolated ports, alerts |
+| **Yellow/Gold** | Warning/info, secondary | `#ffeaa7` | `#fdcb6e` | Consistency checks, rules, notes |
+| **Gray** | Neutral/background elements | `#dfe6e9` | `#b2bec3` | Borders, outlines, disabled states |
+| **Teal** | Alternate active/secondary | `#00b894` | `#00cec9` | Secondary active states |
+| **Orange** | Legacy/transition | `#f39c12` | `#e17055` | Legacy platforms, migration paths |
+| **Dark Charcoal** | Headers/titles | `#2d3436` | `#636e72` | Section headers, title bars |
+
+### Background Gradient (same for ALL diagrams)
+
+```xml
+<linearGradient id="PREFIX-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#f5f7fa;stop-opacity:1" />
+  <stop offset="50%" style="stop-color:#ecf0f1;stop-opacity:1" />
+  <stop offset="100%" style="stop-color:#dfe6e9;stop-opacity:1" />
+</linearGradient>
+```
+
+### Branding Badge Gradient (same for ALL diagrams)
+
+```xml
+<linearGradient id="PREFIX-badge-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+  <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+  <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+</linearGradient>
+<linearGradient id="PREFIX-badge-accent" x1="0%" y1="0%" x2="0%" y2="100%">
+  <stop offset="0%" style="stop-color:#f7971e;stop-opacity:1" />
+  <stop offset="100%" style="stop-color:#ffd200;stop-opacity:1" />
+</linearGradient>
+```
+
+### Gradient Naming Convention
+
+- Use a unique prefix per diagram (e.g., `v1-`, `v4-`, `pv-`, `gv-`)
+- Generic gradients: `PREFIX-g0`, `PREFIX-g1`, etc.
+- Semantic gradients (preferred): `PREFIX-promisc`, `PREFIX-comm`, `PREFIX-iso`, etc.
+- Always include: `PREFIX-bg` (background), `PREFIX-badge-bg`, `PREFIX-badge-accent`
+
+### Rules
+
+1. **NEVER use washed-out/pastel gradients** — always use the vibrant palette above
+2. **Gradient direction**: Always `x1="0%" y1="0%" x2="100%" y2="100%"` (diagonal)
+3. **Drop shadows**: Use `feDropShadow dx="1" dy="3" stdDeviation="3" flood-color="#00000018"`
+4. **Text on colored boxes**: Use `#fff` (white) for text on dark gradients, `#2d3436` for text on light gradients
+5. **Gallery copies** must use different gradient ID prefixes to avoid SVG ID conflicts
+6. **Branding badge** must appear on every diagram (bottom-right corner)
+
+---
+
 ## New in v2.2.0
 
 ### HTML Dashboard Sync
@@ -160,4 +229,4 @@ Work through these without looking at the guide:
 
 ---
 
-*Last Updated: February 18, 2026 (v2.2.0)*
+*Last Updated: February 18, 2026 (v2.3.0)*
