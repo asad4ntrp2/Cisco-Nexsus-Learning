@@ -1,5 +1,7 @@
 # Cisco Nexus Product Family - Student Learning Guide
 
+**🔗 Live Guide:** **[Open the interactive guide](https://asad4ntrp2.github.io/Cisco-Nexsus-Learning/)** — `https://asad4ntrp2.github.io/Cisco-Nexsus-Learning/`
+
 **Author:** Asad Yaseen
 **Email:** asad4ntrp2@gmail.com
 
