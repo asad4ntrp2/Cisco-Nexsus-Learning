@@ -30,7 +30,6 @@ Open **`index.html`** in any browser for the interactive learning experience wit
 Cisco Nexsus Learning/
 ├── README.md                                    ← You are here
 ├── VERSION.md                                   ← Document version history
-├── continue.md                                  ← Study progress tracker
 ├── index.html                                   ← Interactive HTML learning page (all 16 parts + 9 diagrams)
 ├── docs/
 │   └── Cisco_Nexus_Interview_Guide.md           ← Main study guide (all 16 parts)
@@ -82,7 +81,6 @@ Cisco Nexsus Learning/
 - **All 18 SVG diagrams** (9 inline + 9 gallery) updated to use vibrant saturated gradients
 - Replaced washed-out pastel colors with the same rich color scheme used in the PVLAN diagram
 - Standardized palette: vibrant blue, green, purple, red, yellow/gold, gray, teal, orange
-- **Diagram Style Guide** added to `continue.md` — mandatory color palette and rules for all future diagrams
 
 ## What's New in v2.2.0
 
